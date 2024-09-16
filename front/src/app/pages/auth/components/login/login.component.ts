@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, Validators} from "@angular/forms";
 import * as passwordValidator from 'password-validator';
 import {Router} from "@angular/router";
 import {LoginRequest} from "../../interfaces/LoginRequest.interface";
@@ -18,6 +18,7 @@ import {AuthService} from "../../services/auth.service";
 export class LoginComponent {
   schema = new passwordValidator();
   public onError = false;
+  public hide = true;
 
   constructor(private authService: AuthService,
               private fb: FormBuilder,
@@ -44,14 +45,18 @@ export class LoginComponent {
         localStorage.setItem('token', response.token);
         this.authService.me().subscribe((user: User) => {
           this.sessionService.logIn(user);
-          this.router.navigate(['/rentals'])
+          this.router.navigate(['/articles'])
         });
-        this.router.navigate(['/rentals'])
+        this.router.navigate(['/articles'])
       },
       error => {
         console.error('Erreur de connexion :', error);
         this.onError = true
       }
     );
+  }
+
+  public back(): void {
+    window.history.back();
   }
 }

@@ -5,6 +5,8 @@ import {Observable} from "rxjs";
 import {LoginRequest} from "../interfaces/LoginRequest.interface";
 import {TokenResponse} from "../../../interfaces/tokenResponse.interface";
 import {User} from "../../../interfaces/user.interface";
+import {RegisterRequest} from "../interfaces/registerRequest.interface";
+import {AuthSuccess} from "../interfaces/AuthSuccess.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,14 @@ export class AuthService {
       .set('password', loginRequest.password);
 
     return this.httpClient.post<TokenResponse>(`${this.pathService}/login`, null, { params });
+  }
+
+  public register(registerRequest: RegisterRequest): Observable<AuthSuccess> {
+    const params = new HttpParams()
+    .set('email', registerRequest.email)
+    .set('password', registerRequest.password)
+      .set('username', registerRequest.username);
+    return this.httpClient.post<AuthSuccess>(`${this.pathService}/register`, null, { params });
   }
 
   public me(): Observable<User> {

@@ -1,0 +1,31 @@
+<mat-card-header class="header">
+  <img class="small_logo" src="assets/logo_p6.png" alt="logo" />
+</mat-card-header>
+<button mat-icon-button (click)="back()" class="back-button">
+  <mat-icon>arrow_back</mat-icon>
+</button>
+<div class="register">
+  <mat-card>
+    <div class="page-titre">
+      <h1>S'enregistrer</h1>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-card-content class="content">
+        <mat-form-field class="form-field">
+          <label>Nom d'utilsateur</label>
+          <input matInput formControlName="username">
+        </mat-form-field>
+        <mat-form-field class="form-field">
+          <label>Adresse e-mail</label>
+          <input matInput formControlName="email">
+        </mat-form-field>
+        <mat-form-field class="form-field">
+          <label>Mot de passe</label>
+          <input matInput formControlName="password">
+        </mat-form-field>
+      </mat-card-content>
+    </form>
+  </mat-card>
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
+  <p *ngIf="onError" class="error">Ann error occurred</p>
+</div>
