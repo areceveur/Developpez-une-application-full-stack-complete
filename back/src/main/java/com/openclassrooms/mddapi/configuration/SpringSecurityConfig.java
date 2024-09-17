@@ -26,7 +26,7 @@ public class SpringSecurityConfig {
     private final String jwtKey = "kYuJ/tROYPkhTbGbzlUBjEem9rHbnswP++DqvMywEQzOgMQZBx7/DF/yxn5SRiiV";
 
     @Bean
-    public SecurityFilterChain springSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session ->
@@ -34,7 +34,8 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll();
                     auth.anyRequest().authenticated();
-                });
+                })
+                .build();
     }
 
     @Bean
