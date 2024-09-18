@@ -1,12 +1,12 @@
 import {Component} from "@angular/core";
 import {FormBuilder, Validators} from "@angular/forms";
-import * as passwordValidator from 'password-validator';
 import {Router} from "@angular/router";
 import {LoginRequest} from "../../interfaces/LoginRequest.interface";
 import {AuthSuccess} from "../../interfaces/AuthSuccess.interface";
 import {User} from "../../../../interfaces/user.interface";
 import {SessionService} from "../../../../services/session.service";
 import {AuthService} from "../../services/auth.service";
+import {PasswordValidator} from "../../services/password.validator";
 
 
 @Component({
@@ -16,7 +16,6 @@ import {AuthService} from "../../services/auth.service";
 })
 
 export class LoginComponent {
-  schema = new passwordValidator();
   public onError = false;
   public hide = true;
 
@@ -24,18 +23,11 @@ export class LoginComponent {
               private fb: FormBuilder,
               private router: Router,
               private sessionService: SessionService) {
-    this.schema
-      .is().min(8)
-      .is().max(100)
-      .has().uppercase()
-      .has().lowercase()
-      .has().digits()
-      .has().symbols();
   }
 
   public form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required, PasswordValidator.strong]]
   });
 
   public submit(): void {
@@ -47,7 +39,6 @@ export class LoginComponent {
           this.sessionService.logIn(user);
           this.router.navigate(['/articles'])
         });
-        this.router.navigate(['/articles'])
       },
       error => {
         console.error('Erreur de connexion :', error);

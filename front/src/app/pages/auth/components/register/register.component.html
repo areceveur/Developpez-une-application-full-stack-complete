@@ -12,7 +12,7 @@
     <form [formGroup]="form" (ngSubmit)="submit()">
       <mat-card-content class="content">
         <mat-form-field class="form-field">
-          <label>Nom d'utilsateur</label>
+          <label>Nom d'utilisateur</label>
           <input matInput formControlName="username">
         </mat-form-field>
         <mat-form-field class="form-field">
@@ -24,8 +24,8 @@
           <input matInput formControlName="password">
         </mat-form-field>
       </mat-card-content>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
+      <p *ngIf="onError" class="error">An error occurred</p>
     </form>
   </mat-card>
-  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
-  <p *ngIf="onError" class="error">Ann error occurred</p>
 </div>

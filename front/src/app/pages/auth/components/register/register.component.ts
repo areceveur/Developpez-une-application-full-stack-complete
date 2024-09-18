@@ -6,7 +6,7 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {SessionService} from "../../../../services/session.service";
 import {RegisterRequest} from "../../interfaces/registerRequest.interface";
 import {AuthSuccess} from "../../interfaces/AuthSuccess.interface";
-import * as passwordValidator from "password-validator";
+import {PasswordValidator} from "../../services/password.validator";
 
 @Component({
   selector: "register",
@@ -15,24 +15,15 @@ import * as passwordValidator from "password-validator";
 })
 export class RegisterComponent{
   onError = false;
-  schema = new passwordValidator();
 
   constructor(private authService: AuthService,
               private router: Router,
               private fb: FormBuilder,
-              private sessionService: SessionService) {
-    this.schema
-      .is().min(8)
-      .is().max(100)
-      .has().uppercase()
-      .has().lowercase()
-      .has().digits()
-      .has().symbols();
-  }
+              private sessionService: SessionService) {}
 
   public form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
+    password: ['', [Validators.required, PasswordValidator.strong]],
     username: ['', [Validators.required]]
   });
 
@@ -45,7 +36,6 @@ export class RegisterComponent{
           this.sessionService.logIn(user);
           this.router.navigate(['/articles'])
         });
-        this.router.navigate(['/articles'])
       },
       error => {
         console.error('Erreur de connexion :', error);

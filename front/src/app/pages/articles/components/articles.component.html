@@ -1,0 +1,34 @@
+<mat-card-header class="header">
+  <img class = "small_logo" src="assets/logo_p6.png" alt="logo" />
+</mat-card-header>
+<div class="articles">
+  <button mat-raised-button color="primary" routerLink="create">
+    <mat-icon>add</mat-icon>
+    <span>Créer un article</span>
+  </button>
+  <div class="item">
+    <ng-container *ngIf="(articles$ | async)?.length ; else emptyArticles">
+      <mat-card class="item" *ngFor="let article of (articles$ | async)">
+        <mat-card-header>
+          <mat-card-title>
+            {{article.titre}}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="side-by-side">
+            <p>{{article.created_at}}</p>
+            <p>{{article.auteur}}</p>
+          </div>
+          <div>
+            <p>
+              {{article.contenu}}
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+    <ng-template #emptyArticles>
+      <p>No rentals available.</p>
+    </ng-template>
+  </div>
+</div>
