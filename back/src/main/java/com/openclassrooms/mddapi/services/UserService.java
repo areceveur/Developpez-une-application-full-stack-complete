@@ -19,4 +19,9 @@ public class UserService {
     public DBUser saveUser(DBUser dbUser) {
         return userRepository.save(dbUser);
     }
+
+    public int findUserByEmail(String email) {
+        Optional<DBUser> user = userRepository.findByEmail(email);
+        return user.isPresent() ? user.get().getId() : null;
+    }
 }

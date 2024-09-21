@@ -1,5 +1,6 @@
 package com.openclassrooms.mddapi.controllers;
 
+import com.openclassrooms.mddapi.dto.LoginRequest;
 import com.openclassrooms.mddapi.dto.RegisterRequest;
 import com.openclassrooms.mddapi.models.DBUser;
 import com.openclassrooms.mddapi.services.JWTService;
@@ -33,13 +34,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> authenticateUser(
-            @RequestParam String email,
-            @RequestParam String password) {
+    public ResponseEntity<TokenResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
-        Optional<DBUser> user = userService.getUserByEmail(email);
-        if (user.isPresent() && bCryptPasswordEncoder.matches(password, user.get().getPassword())) {
-            String token = jwtService.generateToken(new UsernamePasswordAuthenticationToken(email, password));
+        Optional<DBUser> user = userService.getUserByEmail(loginRequest.getEmail());
+        if (user.isPresent() && bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
+            String token = jwtService.generateToken(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
             DBUser foundUser = user.get();
             foundUser.setUpdatedAt(new Date());
             userService.saveUser(foundUser);

@@ -1,0 +1,29 @@
+<div>
+  <mat-card>
+    <mat-card-title>
+      <div>
+        <button mat-icon-button routerLink="/articles">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>
+          Créer un nouvel article
+        </h1>
+      </div>
+    </mat-card-title>
+    <mat-card-content *ngIf="articleForm">
+      <form [formGroup]="articleForm" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline">
+          <mat-label>Titre</mat-label>
+          <input matInput formControlName="titre">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Contenu</mat-label>
+          <textarea matInput formControlName="contenu"></textarea>
+        </mat-form-field>
+        <div>
+          <button mat-raised-button color="primary" type="submit" [disabled]="articleForm.invalid">Créer</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

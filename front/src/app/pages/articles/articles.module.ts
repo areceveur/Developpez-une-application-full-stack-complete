@@ -1,23 +1,31 @@
 import {NgModule} from "@angular/core";
-import {ArticlesComponent} from "./components/articles.component";
+import {ArticlesComponent} from "./components/list/articles.component";
 import {ArticlesRoutingModule} from "./articles-routing.module";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
+import {MatInputModule} from "@angular/material/input";
+import {FormComponent} from "./components/form/form.component";
+import {ReactiveFormsModule} from "@angular/forms";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
-    ArticlesComponent
+    ArticlesComponent,
+    FormComponent
   ],
   imports: [
     ArticlesRoutingModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatInputModule,
     AsyncPipe,
     NgForOf,
-    NgIf
+    NgIf,
+    ReactiveFormsModule,
+    MatSnackBarModule
   ]
 })
 

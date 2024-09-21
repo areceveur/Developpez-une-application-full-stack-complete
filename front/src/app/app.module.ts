@@ -5,9 +5,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MatCardModule} from "@angular/material/card";
 import {AuthModule} from "./pages/auth/auth.module";
+import {ArticlesModule} from "./pages/articles/articles.module";
+import {JwtInterceptor} from "./interceptors/jwt.interceptor";
+import {FormComponent} from "./pages/articles/components/form/form.component";
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
@@ -18,9 +21,12 @@ import {AuthModule} from "./pages/auth/auth.module";
     MatButtonModule,
     MatCardModule,
     HttpClientModule,
-    AuthModule
+    AuthModule,
+    ArticlesModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

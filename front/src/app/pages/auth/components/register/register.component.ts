@@ -7,6 +7,7 @@ import {SessionService} from "../../../../services/session.service";
 import {RegisterRequest} from "../../interfaces/registerRequest.interface";
 import {AuthSuccess} from "../../interfaces/AuthSuccess.interface";
 import {PasswordValidator} from "../../services/password.validator";
+import {catchError, of, switchMap} from "rxjs";
 
 @Component({
   selector: "register",
@@ -29,19 +30,23 @@ export class RegisterComponent{
 
   public submit(): void {
     const registerRequest = this.form.value as RegisterRequest;
-    this.authService.register(registerRequest).subscribe(
-      (response: AuthSuccess) => {
+    this.authService.register(registerRequest).pipe(
+      switchMap((response: AuthSuccess) => {
         localStorage.setItem('token', response.token);
-        this.authService.me().subscribe((user: User) => {
-          this.sessionService.logIn(user);
-          this.router.navigate(['/articles'])
-        });
-      },
-      error => {
-        console.error('Erreur de connexion :', error);
-        this.onError = true;
+
+        return this.authService.me();
+      }),
+        catchError(error => {
+          console.error('Erreur de connexion :', error);
+          this.onError = true;
+          return of(null);
+        })
+    ).subscribe((user: User | null) => {
+      if(user) {
+        this.sessionService.logIn(user);
+        this.router.navigate(['/articles'])
       }
-    );
+    });
   }
 
     public back(): void {
