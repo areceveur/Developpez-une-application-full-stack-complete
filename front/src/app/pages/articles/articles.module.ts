@@ -1,15 +1,15 @@
 import {NgModule} from "@angular/core";
 import {ArticlesComponent} from "./components/list/articles.component";
 import {ArticlesRoutingModule} from "./articles-routing.module";
-import {MatLegacyCardModule as MatCardModule} from "@angular/material/legacy-card";
-import {MatLegacyButtonModule as MatButtonModule} from "@angular/material/legacy-button";
+import {MatCardModule} from "@angular/material/card";
+import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
-import {MatLegacyInputModule as MatInputModule} from "@angular/material/legacy-input";
+import {MatInputModule} from "@angular/material/input";
 import {FormComponent} from "./components/form/form.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {MatLegacySnackBarModule as MatSnackBarModule} from "@angular/material/legacy-snack-bar";
-import {MatLegacySelectModule as MatSelectModule} from "@angular/material/legacy-select";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [

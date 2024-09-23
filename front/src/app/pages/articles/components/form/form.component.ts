@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Article} from "../../interfaces/article.interface";
 import {SessionService} from "../../../../services/session.service";
 import {ArticleResponse} from "../../interfaces/articleResponse.interface";
-import {MatLegacySnackBar as MatSnackBar} from "@angular/material/legacy-snack-bar";
+import {MatSnackBar} from "@angular/material/snack-bar";
 import {ArticlesService} from "../../services/articles.service";
 import {Theme} from "../../interfaces/theme.interface";
 import {ThemeService} from "../../services/theme.service";
