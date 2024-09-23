@@ -4,5 +4,7 @@ export interface Article {
   contenu: string,
   owner_id: number,
   created_at: Date,
-  updated_at: Date
+  updated_at: Date,
+  auteur: string,
+  themeId: string
 }

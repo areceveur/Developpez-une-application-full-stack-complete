@@ -1,7 +1,6 @@
 import {Component} from "@angular/core";
 import {Observable} from "rxjs";
 import {ArticlesResponse} from "../../interfaces/articlesResponse.interface";
-import {User} from "../../../../interfaces/user.interface";
 import {SessionService} from "../../../../services/session.service";
 import {ArticlesService} from "../../services/articles.service";
 
@@ -14,12 +13,12 @@ export class ArticlesComponent {
   public articles$: Observable<ArticlesResponse>;
 
   constructor(
-    private sessionService: SessionService,
     private articlesService: ArticlesService
   ) {
     this.articles$ = this.articlesService.all();
-  }
-  get user(): User | undefined {
-    return this.sessionService.user;
+    this.articles$.subscribe((articles) => {
+      console.log('Articles:', articles);
+    });
+
   }
 }

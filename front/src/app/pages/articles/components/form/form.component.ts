@@ -6,6 +6,8 @@ import {SessionService} from "../../../../services/session.service";
 import {ArticleResponse} from "../../interfaces/articleResponse.interface";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ArticlesService} from "../../services/articles.service";
+import {Theme} from "../../interfaces/theme.interface";
+import {ThemeService} from "../../services/theme.service";
 
 @Component({
   selector: "app-form",
@@ -15,24 +17,30 @@ import {ArticlesService} from "../../services/articles.service";
 
 export class FormComponent implements OnInit {
   public articleForm: FormGroup | undefined;
+  public theme: Theme[] = [];
 
   constructor(
               private router: Router,
               private sessionService: SessionService,
               private fb: FormBuilder,
               private matSnackBar: MatSnackBar,
-              private articlesService: ArticlesService) {
+              private articlesService: ArticlesService,
+              private themeService: ThemeService) {
   }
 
   ngOnInit(): void {
     this.initForm();
+    this.themeService.getAllThemes().subscribe((themes) => {
+      this.theme = themes;
+    })
   }
 
   public submit(): void {
-    const formData = new FormData();
-    formData.append('titre', this.articleForm!.get("titre")?.value);
-    formData.append('contenu', this.articleForm!.get("contenu")?.value);
-    this.articlesService.create(formData).subscribe((response) => {
+    const articleData = {
+    titre: this.articleForm!.get("titre")?.value,
+    contenu: this.articleForm!.get("contenu")?.value
+    };
+    this.articlesService.create(articleData).subscribe((response) => {
       this.exitPage(response)
     });
   }
@@ -43,7 +51,8 @@ export class FormComponent implements OnInit {
     }
     this.articleForm = this.fb.group({
       titre: [article ? article.titre : '', [Validators.required]],
-      contenu: [article ? article.contenu : '', [Validators.required]]
+      contenu: [article ? article.contenu : '', [Validators.required]],
+      themeId: [article ? article.themeId: '', [Validators.required]]
     });
   }
 

@@ -7,8 +7,9 @@ import {MatIconModule} from "@angular/material/icon";
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {MatInputModule} from "@angular/material/input";
 import {FormComponent} from "./components/form/form.component";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -25,7 +26,9 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     NgForOf,
     NgIf,
     ReactiveFormsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    FormsModule,
+    MatSelectModule
   ]
 })
 

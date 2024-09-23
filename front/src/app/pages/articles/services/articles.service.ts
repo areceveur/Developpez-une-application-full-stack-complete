@@ -16,7 +16,7 @@ export class ArticlesService {
     return this.httpClient.get<ArticlesResponse>(`${this.pathService}`);
   }
 
-  public create(form: FormData): Observable<ArticleResponse> {
-    return this.httpClient.post<ArticleResponse>(`${this.pathService}/create`, form);
+  public create(article: {titre: string, contenu: string}): Observable<ArticleResponse> {
+    return this.httpClient.post<ArticleResponse>(`${this.pathService}/create`, article);
   }
 }

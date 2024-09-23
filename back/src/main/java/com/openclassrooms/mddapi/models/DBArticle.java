@@ -13,10 +13,12 @@ import java.util.Date;
 public class DBArticle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String titre;
     private String contenu;
-    private int owner_id;
+    private Long owner_id;
     private Date created_at;
     private Date updated_at;
+    private String auteur;
+    private String themeId;
 }

@@ -15,7 +15,8 @@ const routes: Routes = [
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
   { path: 'auth/me', component: MeComponent },
-  { path: 'articles',
+  {
+    path: 'articles',
     loadChildren: () => import('./pages/articles/articles.module').then(m => m.ArticlesModule),
     canActivate: [AuthGuard]
   },

@@ -20,8 +20,14 @@ public class UserService {
         return userRepository.save(dbUser);
     }
 
-    public int findUserByEmail(String email) {
+    public Long findUserByEmail(String email) {
         Optional<DBUser> user = userRepository.findByEmail(email);
-        return user.isPresent() ? user.get().getId() : null;
+        return user.map(DBUser::getId).orElseThrow(() -> new RuntimeException("User not found with email" + email));
+    }
+
+    public String findUserByUsernameById(Long ownerId) {
+       return userRepository.findById(ownerId)
+                .map(DBUser::getUsername)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

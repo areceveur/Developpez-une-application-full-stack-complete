@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ArticleRequest {
+public class ArticleResponse {
     private String titre;
     private String contenu;
-    private int owner_id;
-    private String themeId;
+    private Long owner_id;
+    private String auteur;
 }

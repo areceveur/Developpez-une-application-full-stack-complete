@@ -1,6 +1,7 @@
 package com.openclassrooms.mddapi.controllers;
 
 import com.openclassrooms.mddapi.dto.ArticleRequest;
+import com.openclassrooms.mddapi.dto.ArticleResponse;
 import com.openclassrooms.mddapi.models.DBArticle;
 import com.openclassrooms.mddapi.services.ArticleService;
 import com.openclassrooms.mddapi.services.UserService;
@@ -30,17 +31,27 @@ public class ArticleController {
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity<DBArticle> createArticle(@RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ArticleResponse> createArticle(@RequestBody ArticleRequest articleRequest) {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        int ownerId = userService.findUserByEmail(currentUserEmail);
+        Long ownerId = userService.findUserByEmail(currentUserEmail);
 
         DBArticle dbArticle = new DBArticle();
         dbArticle.setTitre(articleRequest.getTitre());
         dbArticle.setContenu(articleRequest.getContenu());
         dbArticle.setOwner_id(ownerId);
         dbArticle.setCreated_at(new Date());
+        dbArticle.setThemeId(articleRequest.getThemeId());
 
         DBArticle createdArticle = articleService.saveArticle(dbArticle);
-        return ResponseEntity.ok(createdArticle);
+
+        ArticleResponse articleResponse = new ArticleResponse();
+        articleResponse.setTitre(createdArticle.getTitre());
+        articleResponse.setContenu(createdArticle.getContenu());
+        articleResponse.setOwner_id(createdArticle.getOwner_id());
+
+        String auteur = userService.findUserByUsernameById(createdArticle.getOwner_id());
+        articleResponse.setAuteur(auteur);
+
+        return ResponseEntity.ok(articleResponse);
     }
 }

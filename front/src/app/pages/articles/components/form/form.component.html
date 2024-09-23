@@ -12,6 +12,14 @@
     </mat-card-title>
     <mat-card-content *ngIf="articleForm">
       <form [formGroup]="articleForm" (ngSubmit)="submit()">
+        <mat-form-field>
+          <mat-label>Thème</mat-label>
+          <mat-select formControlName ="themeId" required>
+            <mat-option *ngFor="let theme of theme" [value]="theme.id">
+              {{theme.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Titre</mat-label>
           <input matInput formControlName="titre">
