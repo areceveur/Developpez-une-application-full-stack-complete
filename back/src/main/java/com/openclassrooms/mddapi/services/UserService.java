@@ -30,4 +30,8 @@ public class UserService {
                 .map(DBUser::getUsername)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    public Optional<DBUser> getUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
 }

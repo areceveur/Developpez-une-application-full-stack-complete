@@ -1,7 +1,7 @@
 package com.openclassrooms.mddapi.controllers;
 
-import com.openclassrooms.mddapi.dto.ArticleRequest;
-import com.openclassrooms.mddapi.dto.ArticleResponse;
+import com.openclassrooms.mddapi.dto.requests.ArticleRequest;
+import com.openclassrooms.mddapi.mapper.ArticleMapper;
 import com.openclassrooms.mddapi.models.DBArticle;
 import com.openclassrooms.mddapi.services.ArticleService;
 import com.openclassrooms.mddapi.services.UserService;
@@ -10,13 +10,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Date;
-
 @RestController
 @RequestMapping("api/articles")
 public class ArticleController {
-    private final ArticleService articleService;
-    private final UserService userService;
+    @Autowired
+    private ArticleService articleService;
+
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ArticleMapper articleMapper;
 
     @Autowired
     public ArticleController(ArticleService articleService, UserService userService) {
@@ -31,27 +34,16 @@ public class ArticleController {
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity<ArticleResponse> createArticle(@RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ArticleRequest> createArticle(@RequestBody ArticleRequest articleRequest) {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Long ownerId = userService.findUserByEmail(currentUserEmail);
+        String auteur = userService.findUserByUsernameById(ownerId);
 
-        DBArticle dbArticle = new DBArticle();
-        dbArticle.setTitre(articleRequest.getTitre());
-        dbArticle.setContenu(articleRequest.getContenu());
-        dbArticle.setOwner_id(ownerId);
-        dbArticle.setCreated_at(new Date());
-        dbArticle.setThemeId(articleRequest.getThemeId());
+        DBArticle dbArticle = articleMapper.toEntity(articleRequest);
+        dbArticle = articleService.saveArticle(dbArticle, ownerId, auteur);
 
-        DBArticle createdArticle = articleService.saveArticle(dbArticle);
+        ArticleRequest responseDto = articleMapper.toDto(dbArticle);
 
-        ArticleResponse articleResponse = new ArticleResponse();
-        articleResponse.setTitre(createdArticle.getTitre());
-        articleResponse.setContenu(createdArticle.getContenu());
-        articleResponse.setOwner_id(createdArticle.getOwner_id());
-
-        String auteur = userService.findUserByUsernameById(createdArticle.getOwner_id());
-        articleResponse.setAuteur(auteur);
-
-        return ResponseEntity.ok(articleResponse);
+        return ResponseEntity.ok(responseDto);
     }
 }

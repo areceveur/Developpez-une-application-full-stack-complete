@@ -1,13 +1,13 @@
-package com.openclassrooms.mddapi.dto;
+package com.openclassrooms.mddapi.dto.requests;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ArticleResponse {
+public class ArticleRequest {
     private String titre;
     private String contenu;
     private Long owner_id;
-    private String auteur;
+    private String themeId;
 }

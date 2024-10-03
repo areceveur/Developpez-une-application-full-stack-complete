@@ -1,0 +1,28 @@
+<div class="themes">
+  <div class="item">
+    <ng-container *ngIf="(themes$ | async)?.length ; else emptyThemes">
+      <mat-card class="item" *ngFor="let theme of (themes$ | async)">
+        <mat-card-header>
+          <mat-card-title>
+            {{theme.name}}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="side-by-side">
+            <p>{{theme.description}}</p>
+          </div>
+          <button *ngIf="!isSubscribed(theme.id)" mat-raised-button color="primary" (click)="subscribe(theme.id)">
+            <span>S'abonner</span>
+          </button>
+          <button *ngIf="isSubscribed(theme.id)" disabled>
+            <span>Abonné</span>
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+    <ng-template #emptyThemes>
+      <p>No theme available</p>
+    </ng-template>
+  </div>
+
+</div>

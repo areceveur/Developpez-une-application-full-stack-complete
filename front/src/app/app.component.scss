@@ -1,0 +1,21 @@
+.app {
+  .link {
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+  }
+  .small_logo {
+    width: 150px;
+    height: auto;
+    max-width: 100%;
+    float: left;
+  }
+
+  .link + .link {
+    margin-left: 10px;
+  }
+
+  .mat-icon {
+    font-size: 25px;
+  }
+}

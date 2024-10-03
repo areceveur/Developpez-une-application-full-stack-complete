@@ -1,1 +1,14 @@
-<router-outlet></router-outlet>
+<div class="app">
+  <mat-toolbar class="header">
+    <img class = "small_logo" src="../../../../../assets/logo_p6.png" alt="logo" />
+    <div *ngIf="$isLogged() | async; else notLogged">
+      <span routerLink="articles" class="link">Articles</span>
+      <span routerLink="themes" class="link">Thèmes</span>
+      <mat-icon routerLink="auth/me" class="link">account_circle</mat-icon>
+    </div>
+    <ng-template #notLogged></ng-template>
+  </mat-toolbar>
+  <div>
+    <router-outlet></router-outlet>
+  </div>
+</div>

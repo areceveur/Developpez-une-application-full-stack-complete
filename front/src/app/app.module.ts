@@ -10,6 +10,8 @@ import {MatCardModule} from "@angular/material/card";
 import {AuthModule} from "./pages/auth/auth.module";
 import {ArticlesModule} from "./pages/articles/articles.module";
 import {JwtInterceptor} from "./interceptors/jwt.interceptor";
+import {MatToolbar} from "@angular/material/toolbar";
+import {MatIcon} from "@angular/material/icon";
 
 @NgModule({ declarations: [AppComponent, HomeComponent],
     bootstrap: [AppComponent], imports: [BrowserModule,
@@ -18,7 +20,7 @@ import {JwtInterceptor} from "./interceptors/jwt.interceptor";
         MatButtonModule,
         MatCardModule,
         AuthModule,
-        ArticlesModule], providers: [
+        ArticlesModule, MatToolbar, MatIcon], providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         provideHttpClient(withInterceptorsFromDi())
     ] })

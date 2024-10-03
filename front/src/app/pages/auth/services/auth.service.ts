@@ -47,4 +47,13 @@ export class AuthService {
     return this.httpClient.get<User>(`${this.pathService}/me`, {headers: this.getAuthHeaders()});
   }
 
+  public logout() {
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
+  }
+
+  public updateUser(userData: Partial<User>) {
+    return this.httpClient.put<User>(`${this.pathService}/me`, userData)
+  }
+
 }

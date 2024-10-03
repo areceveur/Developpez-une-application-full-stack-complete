@@ -4,9 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import {LoginComponent} from "./pages/auth/components/login/login.component";
 import {RegisterComponent} from "./pages/auth/components/register/register.component";
 import {MeComponent} from "./pages/auth/components/me/me.component";
-import {ArticlesComponent} from "./pages/articles/components/list/articles.component";
 import {AuthGuard} from  "./guards/auth.gard";
-import {FormComponent} from "./pages/articles/components/form/form.component";
 
 // consider a guard combined with canLoad / canActivate route option
 // to manage unauthenticated user to access private routes
@@ -20,6 +18,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/articles/articles.module').then(m => m.ArticlesModule),
     canActivate: [AuthGuard]
   },
+  {
+    path: 'themes',
+    loadChildren: () => import('./pages/themes/themes.module').then(m => m.ThemesModule),
+    canActivate: [AuthGuard]
+  }
 ];
 
 @NgModule({

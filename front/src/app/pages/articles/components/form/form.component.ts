@@ -6,8 +6,8 @@ import {SessionService} from "../../../../services/session.service";
 import {ArticleResponse} from "../../interfaces/articleResponse.interface";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ArticlesService} from "../../services/articles.service";
-import {Theme} from "../../interfaces/theme.interface";
-import {ThemeService} from "../../services/theme.service";
+import {Theme} from "../../../themes/interfaces/theme.interface";
+import {ThemeService} from "../../../themes/services/theme.service";
 
 @Component({
   selector: "app-form",

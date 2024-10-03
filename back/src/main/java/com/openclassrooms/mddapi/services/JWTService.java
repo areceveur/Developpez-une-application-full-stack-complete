@@ -21,7 +21,7 @@ public class JWTService {
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(Authentication authentication, Long userId) {
         Instant now = Instant.now();
         String email = authentication.getName();
 
@@ -30,6 +30,7 @@ public class JWTService {
                 .issuedAt(now)
                 .expiresAt(now.plus(1, ChronoUnit.DAYS))
                 .subject(email)
+                .claim("userId", userId)
                 .build();
         JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(), claims);
         return this.jwtEncoder.encode(jwtEncoderParameters).getTokenValue();

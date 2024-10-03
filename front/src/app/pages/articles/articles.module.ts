@@ -10,11 +10,13 @@ import {FormComponent} from "./components/form/form.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {MatSelectModule} from "@angular/material/select";
+import {DetailComponent} from "./components/detail/detail.component";
 
 @NgModule({
   declarations: [
     ArticlesComponent,
-    FormComponent
+    FormComponent,
+    DetailComponent
   ],
   imports: [
     ArticlesRoutingModule,

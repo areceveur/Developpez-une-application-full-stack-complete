@@ -1,0 +1,51 @@
+<div *ngIf="user; else loading">
+  <h2>Profil utilisateur</h2>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Nom d'utilisateur</mat-label>
+      <input matInput formControlName="username" required>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" required>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid">
+      Mettre à jour le profil
+    </button>
+  </form>
+
+  <div class="abonnements">
+    <h3>Abonnements</h3>
+    <div class="item">
+      <ng-container *ngIf="subscribedThemes?.length; else emptyThemes">
+        <mat-card *ngFor="let theme of subscribedThemes">
+          <mat-card-header>
+            <mat-card-title>
+              {{theme.name}}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="side-by-side">
+              <p>{{theme.description}}</p>
+            </div>
+            <button mat-raised-button color="primary" (click)="unsubscribe(theme.id, user.id)">
+              <span>Se désabonner</span>
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+      <ng-template #emptyThemes>
+        <p>Aucun abonnement pour le moment</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <button mat-raised-button color="primary" (click)="back()">Retour</button>
+  <button mat-raised-button color="warn" (click)="logout()">Se déconnecter</button>
+</div>
+<ng-template #loading>
+  <p>Chargement des informations...</p>
+</ng-template>

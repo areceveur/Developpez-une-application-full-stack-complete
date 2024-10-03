@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ArticlesResponse} from "../interfaces/articlesResponse.interface";
 import {ArticleResponse} from "../interfaces/articleResponse.interface";
+import {Article} from "../interfaces/article.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -18,5 +19,9 @@ export class ArticlesService {
 
   public create(article: {titre: string, contenu: string}): Observable<ArticleResponse> {
     return this.httpClient.post<ArticleResponse>(`${this.pathService}/create`, article);
+  }
+
+  public detail(id: string): Observable<Article> {
+    return this.httpClient.get<Article>(`${this.pathService}/${id}`);
   }
 }

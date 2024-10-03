@@ -1,7 +1,6 @@
 import {Component} from "@angular/core";
 import {Observable} from "rxjs";
 import {ArticlesResponse} from "../../interfaces/articlesResponse.interface";
-import {SessionService} from "../../../../services/session.service";
 import {ArticlesService} from "../../services/articles.service";
 
 @Component({

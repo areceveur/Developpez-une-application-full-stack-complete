@@ -18,6 +18,10 @@ describe('AppComponent', () => {
       logOut: jest.fn()
     };
 
+    routerMock = {
+      navigate: jest.fn()
+    }
+
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,

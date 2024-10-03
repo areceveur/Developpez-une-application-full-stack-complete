@@ -36,7 +36,6 @@ export class LoginComponent {
     this.authService.login(loginRequest).pipe(
     switchMap((response: TokenResponse) => {
       localStorage.setItem('token', response.token);
-
       return this.authService.me();
       }),
     catchError(error => {
