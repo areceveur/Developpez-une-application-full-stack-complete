@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,13 +32,6 @@ public class ThemeService {
     public void subscribe(Long userId, Long themeId) {
         Optional<DBUser> userOpt = userRepository.findById(userId);
         Optional<DBThemes> themeOpt = themeRepository.findById(themeId);
-
-//        if (userOpt.isPresent() && themeOpt.isPresent()) {
-//            DBUser user = userOpt.get();
-//            DBThemes theme = themeOpt.get();
-//            user.getSubscriptions().add(theme);
-//            userRepository.save(user);
-//        }
 
         if (userOpt.isPresent() && themeOpt.isPresent()) {
             DBSubscriptions subscription = new DBSubscriptions();

@@ -1,0 +1,28 @@
+<div *ngIf="isLoading">
+  <p>Chargement en cours</p>
+</div>
+
+<div *ngIf="errorMessage">
+  <p>{{errorMessage}}</p>
+</div>
+
+<div *ngIf="!isLoading && article">
+  <h2>{{article.titre}}</h2>
+  <p>{{article.created_at}}</p>
+  <p>{{article.auteur}}</p>
+  <p>{{article.contenu}}</p>
+
+  <button mat-raised-button (click)="back()">Retour</button>
+</div>
+<div>
+  <h2>Commentaires</h2>
+
+  <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
+    <textarea formControlName="content" placeholder="Placer un commentaire"></textarea>
+    <button type="submit" [disabled]="commentForm.invalid">Commenter</button>
+  </form>
+
+  <div *ngFor="let comment of comments">
+    <p>{{comment.comment}} - <i>{{comment.username || 'Utilisateur inconnu'}}</i></p>
+  </div>
+</div>

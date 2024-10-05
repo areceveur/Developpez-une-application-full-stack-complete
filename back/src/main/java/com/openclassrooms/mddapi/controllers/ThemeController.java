@@ -10,11 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -39,13 +38,18 @@ public class ThemeController {
     }
 
     @PostMapping("/subscribe/{themeId}")
-    public ResponseEntity<Void> subscribe(@PathVariable Long themeId, @RequestParam Long userId) {
+    public ResponseEntity<Void> subscribe(@PathVariable Long themeId) {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId = userService.findUserByEmail(currentUserEmail);
         themeService.subscribe(userId, themeId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/unsubscribe/{themeId}")
-    public ResponseEntity<Void> unsubscribe(@PathVariable Long themeId, @RequestParam Long userId) {
+    public ResponseEntity<Void> unsubscribe(@PathVariable Long themeId) {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId = userService.findUserByEmail(currentUserEmail);
+
         themeService.unsubscribe(userId, themeId);
         return ResponseEntity.ok().build();
     }

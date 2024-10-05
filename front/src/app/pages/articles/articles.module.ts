@@ -4,7 +4,7 @@ import {ArticlesRoutingModule} from "./articles-routing.module";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
-import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
+import {AsyncPipe, DatePipe, NgForOf, NgIf, SlicePipe} from "@angular/common";
 import {MatInputModule} from "@angular/material/input";
 import {FormComponent} from "./components/form/form.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -18,20 +18,22 @@ import {DetailComponent} from "./components/detail/detail.component";
     FormComponent,
     DetailComponent
   ],
-  imports: [
-    ArticlesRoutingModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    AsyncPipe,
-    NgForOf,
-    NgIf,
-    ReactiveFormsModule,
-    MatSnackBarModule,
-    FormsModule,
-    MatSelectModule
-  ]
+    imports: [
+        ArticlesRoutingModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        AsyncPipe,
+        NgForOf,
+        NgIf,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        FormsModule,
+        MatSelectModule,
+        SlicePipe,
+        DatePipe
+    ]
 })
 
 export class ArticlesModule { }

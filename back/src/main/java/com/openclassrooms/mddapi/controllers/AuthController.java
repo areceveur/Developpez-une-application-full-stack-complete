@@ -2,6 +2,7 @@ package com.openclassrooms.mddapi.controllers;
 
 import com.openclassrooms.mddapi.dto.requests.*;
 import com.openclassrooms.mddapi.dto.response.TokenResponse;
+import com.openclassrooms.mddapi.mapper.UserMapperImpl;
 import com.openclassrooms.mddapi.models.DBThemes;
 import com.openclassrooms.mddapi.models.DBUser;
 import com.openclassrooms.mddapi.repository.UserRepository;
@@ -9,6 +10,7 @@ import com.openclassrooms.mddapi.services.JWTService;
 import com.openclassrooms.mddapi.services.SubscriptionService;
 import com.openclassrooms.mddapi.services.ThemeService;
 import com.openclassrooms.mddapi.services.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +24,10 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -38,9 +40,10 @@ public class AuthController {
     private final UserRepository userRepository;
     private final SubscriptionService subscriptionService;
     private final ThemeService themeService;
+    private final UserMapperImpl userMapperImpl;
 
     @Autowired
-    public AuthController(UserService userService, JWTService jwtService, JwtDecoder jwtDecoder, BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository, SubscriptionService subscriptionService, ThemeService themeService) {
+    public AuthController(UserService userService, JWTService jwtService, JwtDecoder jwtDecoder, BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository, SubscriptionService subscriptionService, ThemeService themeService, UserMapperImpl userMapperImpl) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.jwtDecoder = jwtDecoder;
@@ -48,6 +51,7 @@ public class AuthController {
         this.userRepository = userRepository;
         this.subscriptionService = subscriptionService;
         this.themeService = themeService;
+        this.userMapperImpl = userMapperImpl;
     }
 
     @PostMapping("/login")
@@ -123,5 +127,41 @@ public class AuthController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest request) {
+        try {
+            userService.updateUserProfile(request);
+            return ResponseEntity.ok().build();
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erreur lors de la modification" + e.getMessage());
+        }
+    }
+
+    @PostMapping("/me")
+    public ResponseEntity<?> updatePassword(@RequestHeader(value = "Authorization", required = false) String authorizationHeader, @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                String token = authorizationHeader.substring(7);
+                Jwt jwt = jwtDecoder.decode(token);
+                String username = jwt.getSubject();
+
+                Optional<DBUser> userOptional = userService.getUserByEmail(username);
+                if (userOptional.isPresent()) {
+                    DBUser dbUser = userOptional.get();
+                    if (bCryptPasswordEncoder.matches(changePasswordRequest.getCurrentPassword(), dbUser.getPassword())) {
+                        dbUser.setPassword(bCryptPasswordEncoder.encode(changePasswordRequest.getNewPassword()));
+                        userService.saveUser(dbUser);
+                        return ResponseEntity.ok(Collections.singletonMap("message", "Mot de passe mis à jour"));
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mot de passe actuel incorrect");
+                    }
+                }
+            } catch (JwtException e) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

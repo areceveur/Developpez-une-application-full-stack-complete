@@ -53,7 +53,11 @@ export class AuthService {
   }
 
   public updateUser(userData: Partial<User>) {
-    return this.httpClient.put<User>(`${this.pathService}/me`, userData)
+    return this.httpClient.put<User>(`${this.pathService}/me`, userData);
+  }
+
+  public changePassword(passwords: {currentPassword: string, newPassword: string}) {
+    return this.httpClient.post(`${this.pathService}/me`, passwords);
   }
 
 }

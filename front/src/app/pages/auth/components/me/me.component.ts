@@ -8,6 +8,7 @@ import {catchError, of, switchMap} from "rxjs";
 import {SessionService} from "../../../../services/session.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {PasswordValidator} from "../../services/password.validator";
 
 @Component({
   selector: "app-me",
@@ -18,6 +19,7 @@ export class MeComponent {
   public user: User | undefined;
   public subscribedThemes: Theme[] = [];
   public profileForm: FormGroup;
+  public passwordForm: FormGroup;
 
   constructor(private authService: AuthService,
               private router: Router,
@@ -28,7 +30,11 @@ export class MeComponent {
     this.profileForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]]
-    })
+    });
+    this.passwordForm = this.fb.group({
+      currentPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, PasswordValidator.strong]]
+    });
   }
 
   public ngOnInit(): void {
@@ -47,8 +53,6 @@ export class MeComponent {
             email: user.email
           })
 
-          //const themeId = user.subscriptions.map(sub => sub.id);
-          //console.log("Récupération des themes", themeId);
           return this.themeService.getThemesById();
         }
         return of([]);
@@ -97,6 +101,22 @@ export class MeComponent {
     ).subscribe();
   }
 
+  public changePassword(): void {
+    if (this.passwordForm.valid) {
+      const passwords = this.passwordForm.value;
+      this.authService.changePassword(passwords).pipe(
+        switchMap(() => {
+          this.snackBar.open("Mot de passe mis à jour", "Fermer", {duration: 3000});
+          return of(null)
+        }),
+        catchError(error => {
+          console.error('Erreur lors de la mise à jour du mot de passe', error);
+          this.snackBar.open("Erreur lors de la mise à jour du mot de passe","Fermer", {duration: 3000})
+          return of(null);
+        })
+      ).subscribe();
+    }
+  }
 
   public back(): void {
     window.history.back();
@@ -104,8 +124,6 @@ export class MeComponent {
 
   public logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['']);
   }
-
-  protected readonly onsubmit = onsubmit;
 }

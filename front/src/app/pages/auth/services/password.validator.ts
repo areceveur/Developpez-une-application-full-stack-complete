@@ -9,12 +9,13 @@ export class PasswordValidator {
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumeric = /[0-9]/.test(value);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+    const isValidLength = value.length >= 8;
 
-    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecialChar;
+    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecialChar && isValidLength;
 
     if (!passwordValid) {
       return {
-        strong: 'Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial.'
+        strong: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.'
       };
     }
     return null;

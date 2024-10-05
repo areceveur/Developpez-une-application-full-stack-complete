@@ -1,5 +1,6 @@
 package com.openclassrooms.mddapi.services;
 
+import com.openclassrooms.mddapi.dto.requests.UpdateProfileRequest;
 import com.openclassrooms.mddapi.models.DBUser;
 import com.openclassrooms.mddapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,25 @@ public class UserService {
 
     public Optional<DBUser> getUserById(Long userId) {
         return userRepository.findById(userId);
+    }
+
+    public void updateUserProfile(UpdateProfileRequest request) {
+        Optional<DBUser> userOpt = userRepository.findByEmail(request.getEmail());
+
+        if (userOpt.isPresent()) {
+            DBUser user = userOpt.get();
+
+            if (request.getUsername() != null && !request.getUsername().isEmpty()) {
+                user.setUsername(request.getUsername());
+            }
+
+            if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+                user.setEmail(request.getEmail());
+            }
+
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Utilisateur non trouvé avec cet email");
+        }
     }
 }

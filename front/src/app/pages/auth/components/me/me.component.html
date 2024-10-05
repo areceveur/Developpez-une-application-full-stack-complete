@@ -17,6 +17,21 @@
     </button>
   </form>
 
+  <h3>Mettre à jour le mot de passe</h3>
+  <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+    <mat-form-field>
+      <mat-label>Mot de passe actuel</mat-label>
+      <input matInput formControlName="currentPassword" type="password" required>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Nouveau mot de passe</mat-label>
+      <input matInput formControlName="newPassword" type="password" required>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="passwordForm.invalid">Enregistrer</button>
+  </form>
+
   <div class="abonnements">
     <h3>Abonnements</h3>
     <div class="item">

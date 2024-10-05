@@ -18,11 +18,11 @@ export class ThemeService {
   }
 
   public subscription(themeId: number, userId: number): Observable<void> {
-    return this.httpClient.post<void>(`${this.apiUrl}/subscribe/${themeId}?userId=${userId}`, {});
+    return this.httpClient.post<void>(`${this.apiUrl}/subscribe/${themeId}`, {});
   }
 
   public unSubscription(themeId: number, userId: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.apiUrl}/unsubscribe/${themeId}?userId=${userId}`, {});
+    return this.httpClient.delete<void>(`${this.apiUrl}/unsubscribe/${themeId}`, {});
   }
 
   public getThemesById(): Observable<Theme[]> {
