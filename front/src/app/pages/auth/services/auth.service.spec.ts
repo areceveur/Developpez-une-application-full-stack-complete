@@ -72,7 +72,8 @@ describe('AuthService', () => {
       email: 'user@test.com',
       username: 'userTest',
       created_at: new Date(),
-      updated_at: new Date()
+      updated_at: new Date(),
+      subscriptions: []
     };
 
     service.me().subscribe(user => {
@@ -84,4 +85,39 @@ describe('AuthService', () => {
     req.flush(mockUser);
   });
 
+  it('Should logout correctly', () => {
+    service.logout();
+    expect(routerMock.navigate).toHaveBeenCalledWith(['']);
+  })
+
+  it('Should update the user correctly', () => {
+    const mockUserRequest = {
+      currentEmail: 'user@test.com',
+      username: 'userTest',
+      newEmail: 'newUser@test.com'
+    };
+    service.updateUser(mockUserRequest).subscribe(user => {
+      expect(user).toEqual(mockUserRequest);
+      });
+
+    const req = httpMock.expectOne(`${service['pathService']}/me`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(mockUserRequest);
+    req.flush(mockUserRequest);
+  })
+
+  it('Should change the password', () => {
+    const passwords = {
+      currentPassword: 'oldPassword',
+      newPassword: 'newPassword'
+    };
+
+    service.changePassword(passwords).subscribe(password => {
+      expect(password).toBeTruthy();
+    });
+    const req = httpMock.expectOne(`${service['pathService']}/me`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(passwords);
+    req.flush({});
+  })
 })

@@ -37,9 +37,10 @@ export class FormComponent implements OnInit {
 
   public submit(): void {
     const articleData = {
-    titre: this.articleForm!.get("titre")?.value,
-    contenu: this.articleForm!.get("contenu")?.value
+      titre: this.articleForm!.get("titre")?.value,
+      contenu: this.articleForm!.get("contenu")?.value
     };
+
     this.articlesService.create(articleData).subscribe((response) => {
       this.exitPage(response)
     });
@@ -57,7 +58,7 @@ export class FormComponent implements OnInit {
   }
 
   private exitPage(articleResponse: ArticleResponse): void {
-    this.matSnackBar.open(articleResponse.message, "Close", { duration: 3000 });
+    this.matSnackBar.open(articleResponse.message, "Fermer", { duration: 3000 });
     this.router.navigate(['/articles']);
   }
 

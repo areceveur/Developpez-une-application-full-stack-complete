@@ -28,4 +28,12 @@ public class DBUser {
             inverseJoinColumns = @JoinColumn(name = "theme_id")
     )
     private List<DBThemes> subscriptions;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "SUBSCRIPTIONS",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "theme_id")
+    )
+    private List<DBThemes> themes;
 }

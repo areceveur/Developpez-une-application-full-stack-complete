@@ -40,8 +40,4 @@ public class CommentService {
     public List<DBComments> getCommentsByArticle(Long articleId) {
         return commentRepository.findByArticleId(articleId);
     }
-
-    public List<DBComments> getCommentsByUser(Long userId) {
-        return commentRepository.findByUserId(userId);
-    }
 }

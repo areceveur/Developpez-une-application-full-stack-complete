@@ -1,7 +1,9 @@
 package com.openclassrooms.mddapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.mddapi.dto.requests.ChangePasswordRequest;
 import com.openclassrooms.mddapi.dto.requests.RegisterRequest;
+import com.openclassrooms.mddapi.dto.requests.UpdateProfileRequest;
 import com.openclassrooms.mddapi.models.DBUser;
 import com.openclassrooms.mddapi.repository.UserRepository;
 import com.openclassrooms.mddapi.services.JWTService;
@@ -20,9 +22,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,14 +33,10 @@ import static org.hamcrest.Matchers.is;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -49,9 +47,6 @@ public class AuthControllerTest {
 
     @MockBean
     private AuthenticationManager authenticationManager;
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
 
     @MockBean
     private UserRepository userRepository;
@@ -92,7 +87,7 @@ public class AuthControllerTest {
 
         when(userService.getUserByEmail("user@test.com")).thenReturn(Optional.of(dbUser));
         when(bCryptPasswordEncoder.matches("password", dbUser.getPassword())).thenReturn(true);
-        String expectedToken = jwtService.generateToken(authentication);
+        String expectedToken = jwtService.generateToken(authentication, dbUser.getId());
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -135,7 +130,7 @@ public class AuthControllerTest {
         registerRequest.setPassword("password");
         registerRequest.setUsername("UserTest");
 
-        when(passwordEncoder.encode(anyString())).thenReturn("password");
+        when(bCryptPasswordEncoder.encode(anyString())).thenReturn("password");
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -168,5 +163,83 @@ public class AuthControllerTest {
     public void testMeNoAuthHeader() throws Exception {
         mockMvc.perform(get("/api/auth/me"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @WithMockUser(username = "user@test.com")
+    @Test
+    public void testUpdateProfileSuccess() throws Exception {
+        UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest();
+        updateProfileRequest.setCurrentEmail("user@test.com");
+        updateProfileRequest.setUsername("NewUser");
+        updateProfileRequest.setNewEmail("newemail@test.com");
+
+        mockMvc.perform(put("/api/auth/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateProfileRequest)))
+                .andExpect(status().isOk());
+    }
+
+    @WithMockUser(username = "user@test.com")
+    @Test
+    public void testUpdateProfileBadRequest() throws Exception {
+        UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest();
+        updateProfileRequest.setCurrentEmail("user@test.com");
+        updateProfileRequest.setUsername("NewUser");
+        updateProfileRequest.setNewEmail("newemail@test.com");
+
+        Mockito.doThrow(new JwtException("Invalid token"))
+                .when(userService).updateUserProfile(Mockito.any(UpdateProfileRequest.class));
+
+        mockMvc.perform(put("/api/auth/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateProfileRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Erreur lors de la modificationInvalid token"));
+    }
+
+    @Test
+    @WithMockUser(username = "user@test.com")
+    public void testUpdatePasswordSuccess() throws Exception {
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest("oldPassword", "newPassword");
+
+        DBUser dbUser = new DBUser();
+        dbUser.setEmail("user@test.com");
+        dbUser.setPassword(bCryptPasswordEncoder.encode("oldPassword"));
+
+        Jwt jwt = Mockito.mock(Jwt.class);
+        when(jwt.getSubject()).thenReturn("user@test.com");
+        when(jwtDecoder.decode(anyString())).thenReturn(jwt);
+        when(userService.getUserByEmail("user@test.com")).thenReturn(Optional.of(dbUser));
+        when(bCryptPasswordEncoder.matches("oldPassword", dbUser.getPassword())).thenReturn(true);
+
+        mockMvc.perform(post("/api/auth/me")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer validToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(changePasswordRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Mot de passe mis à jour"));
+    }
+
+    @Test
+    @WithMockUser(username = "user@test.com")
+    public void testUpdatePasswordCurrentPasswordIncorrect() throws Exception {
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest("wrongPassword", "newPassword");
+
+        DBUser dbUser = new DBUser();
+        dbUser.setEmail("user@test.com");
+        dbUser.setPassword(bCryptPasswordEncoder.encode("oldPassword"));
+
+        Jwt jwt = Mockito.mock(Jwt.class);
+        when(jwt.getSubject()).thenReturn("user@test.com");
+        when(jwtDecoder.decode(anyString())).thenReturn(jwt);
+        when(userService.getUserByEmail("user@test.com")).thenReturn(Optional.of(dbUser));
+        when(bCryptPasswordEncoder.matches("wrongPassword", dbUser.getPassword())).thenReturn(false);
+
+        mockMvc.perform(post("/api/auth/me")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer validToken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(changePasswordRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Mot de passe actuel incorrect"));
     }
 }

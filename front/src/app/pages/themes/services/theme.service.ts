@@ -21,7 +21,7 @@ export class ThemeService {
     return this.httpClient.post<void>(`${this.apiUrl}/subscribe/${themeId}`, {});
   }
 
-  public unSubscription(themeId: number, userId: number): Observable<void> {
+  public unSubscribe(themeId: number, userId: number): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrl}/unsubscribe/${themeId}`, {});
   }
 

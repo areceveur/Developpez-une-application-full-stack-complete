@@ -49,11 +49,11 @@ export class AuthService {
 
   public logout() {
     localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    this.router.navigate(['']);
   }
 
-  public updateUser(userData: Partial<User>) {
-    return this.httpClient.put<User>(`${this.pathService}/me`, userData);
+  public updateUser(updatedRequest: {currentEmail: string | undefined, username: string, newEmail: string}) {
+    return this.httpClient.put<User>(`${this.pathService}/me`, updatedRequest);
   }
 
   public changePassword(passwords: {currentPassword: string, newPassword: string}) {

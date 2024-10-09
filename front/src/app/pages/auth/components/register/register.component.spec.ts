@@ -64,7 +64,8 @@ describe('RegisterComponent', () => {
       email: "user@test.com",
       username: "User Test",
       created_at: new Date(),
-      updated_at: new Date()
+      updated_at: new Date(),
+      subscriptions: []
     };
 
     authServiceMock.me = jest.fn().mockReturnValue(of(userResponse));

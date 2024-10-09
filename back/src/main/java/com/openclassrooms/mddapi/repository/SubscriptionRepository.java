@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface SubscriptionRepository extends JpaRepository<DBSubscriptions, Long> {
-    List<SubscriptionRequest> findByUser_Id(Long userId);
+    List<DBSubscriptions> findByUser_Id(Long userId);
 
     void deleteByUser_IdAndTheme_Id(Long userId, Long themeId);
 }

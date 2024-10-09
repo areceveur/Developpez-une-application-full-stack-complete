@@ -20,10 +20,6 @@ export class ArticlesComponent implements OnInit {
     private articlesService: ArticlesService
   ) {
     this.articles$ = this.articlesService.all();
-    this.articles$.subscribe((articles) => {
-      console.log('Articles:', articles);
-    });
-
   }
 
   ngOnInit(): void {
@@ -45,18 +41,15 @@ export class ArticlesComponent implements OnInit {
   }
 
   public toggleSortOrder(): void {
-    console.log('trier par bouton cliqué');
     this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     this.sortArticles();
   }
 
   private sortArticles(): void {
-    console.log('Tri des articles, ordre:', this.sortOrder);
     this.articles.sort((a,b) => {
       const dateA = new Date(a.created_at).getTime();
       const dateB = new Date(b.created_at).getTime();
       return this.sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
-    console.log('Articles triés:', this.articles);
   }
 }

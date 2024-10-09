@@ -17,8 +17,8 @@ public class SubscriptionService {
         return subscriptionRepository.findByUser_Id(userId)
                 .stream()
                 .map(subscription -> new SubscriptionRequest(
-                        subscription.getThemeId(),
-                        subscription.getUserId()
+                        subscription.getTheme().getId(),
+                        subscription.getUser().getId()
                 ))
                 .collect(Collectors.toList());
     }

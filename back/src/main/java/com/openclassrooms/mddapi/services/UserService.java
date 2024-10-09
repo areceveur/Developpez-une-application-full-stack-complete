@@ -32,12 +32,8 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public Optional<DBUser> getUserById(Long userId) {
-        return userRepository.findById(userId);
-    }
-
     public void updateUserProfile(UpdateProfileRequest request) {
-        Optional<DBUser> userOpt = userRepository.findByEmail(request.getEmail());
+        Optional<DBUser> userOpt = userRepository.findByEmail(request.getCurrentEmail());
 
         if (userOpt.isPresent()) {
             DBUser user = userOpt.get();
@@ -46,13 +42,15 @@ public class UserService {
                 user.setUsername(request.getUsername());
             }
 
-            if (request.getEmail() != null && !request.getEmail().isEmpty()) {
-                user.setEmail(request.getEmail());
+            if (request.getNewEmail() != null && !request.getNewEmail().isEmpty()) {
+                if (userRepository.findByEmail(request.getNewEmail()).isPresent()) {
+                    throw new IllegalArgumentException("L'email " + request.getNewEmail() + " est déjà utilisé");
+                }
+                user.setEmail(request.getNewEmail());
             }
-
             userRepository.save(user);
         } else {
-            throw new IllegalArgumentException("Utilisateur non trouvé avec cet email");
+            throw new IllegalArgumentException("Utilisateur non trouvé avec cet email " + request.getCurrentEmail());
         }
     }
 }

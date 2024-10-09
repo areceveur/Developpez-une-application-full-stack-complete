@@ -1,5 +1,6 @@
 package com.openclassrooms.mddapi.services;
 
+import com.openclassrooms.mddapi.dto.requests.SubscriptionRequest;
 import com.openclassrooms.mddapi.models.DBSubscriptions;
 import com.openclassrooms.mddapi.models.DBThemes;
 import com.openclassrooms.mddapi.models.DBUser;
@@ -37,7 +38,6 @@ public class ThemeService {
             DBSubscriptions subscription = new DBSubscriptions();
             subscription.setUser(userOpt.get());
             subscription.setTheme(themeOpt.get());
-
             subscriptionRepository.save(subscription);
         }
     }

@@ -5,27 +5,29 @@ import com.openclassrooms.mddapi.dto.requests.ArticleRequest;
 import com.openclassrooms.mddapi.mapper.ArticleMapper;
 import com.openclassrooms.mddapi.mapper.ArticleMapperImpl;
 import com.openclassrooms.mddapi.models.DBArticle;
+import com.openclassrooms.mddapi.models.DBComments;
 import com.openclassrooms.mddapi.services.ArticleService;
+import com.openclassrooms.mddapi.services.CommentService;
 import com.openclassrooms.mddapi.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,9 +49,11 @@ public class ArticleControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private CommentService commentService;
+
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
     }
 
     private String createJwtToken(String username) {
@@ -73,7 +77,7 @@ public class ArticleControllerTest {
         verify(articleService, times(1)).getAllArticles();
     }
 
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     @Test
     public void createArticleTest() throws Exception {
         String currentUserEmail = "user@test.com";
@@ -104,8 +108,6 @@ public class ArticleControllerTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(articleRequest)))
                 .andExpect(status().isOk());
-                //.andExpect(jsonPath("$.titre").value("Titre de l'article"))
-                //.andExpect(jsonPath("$.contenu").value("Contenu de l'article"));
     }
 
     @Test
@@ -124,4 +126,77 @@ public class ArticleControllerTest {
         assertEquals("Test Theme", dbArticle.getThemeId());
     }
 
+    @WithMockUser(username = "user@test.com", roles = "USER")
+    @Test
+    public void testGetArticleById() throws Exception {
+        DBArticle dbArticle = new DBArticle();
+        dbArticle.setId(1L);
+        dbArticle.setTitre("Article 1");
+
+        when(articleService.getArticleById(1L)).thenReturn(Optional.of(dbArticle));
+
+        mockMvc.perform(get("/api/articles/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.titre").value("Article 1"));
+
+        verify(articleService, times(1)).getArticleById(1L);
+    }
+
+    @WithMockUser(username = "user@test.com")
+    @Test
+    public void testGetArticleById_NotFound() throws Exception {
+        when(articleService.getArticleById(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/articles/{id}", 1L))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @WithMockUser(username = "user@test.com")
+    @Test
+    public void testAddComment() throws Exception {
+        Long articleId = 1L;
+        Long userId = 1L;
+        String commentContent = "This is a test comment.";
+
+        DBComments dbComments = new DBComments();
+        dbComments.setComment(commentContent);
+
+        when(userService.findUserByEmail("user@test.com")).thenReturn(userId);
+        when(commentService.addComment(articleId, userId, commentContent)).thenReturn(dbComments);
+
+        mockMvc.perform(post("/api/articles/{articleId}/comments", articleId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"content\": \"" + commentContent + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.comment").value(commentContent));
+
+        verify(commentService, times(1)).addComment(articleId, userId, commentContent);
+    }
+
+    @WithMockUser(username = "user@test.com")
+    @Test
+    public void testGetCommentsByArticle() throws Exception {
+        Long articleId = 1L;
+
+        List<DBComments> comments = new ArrayList<>();
+        DBComments comment1 = new DBComments();
+        comment1.setComment("Comment 1");
+        comments.add(comment1);
+
+        DBComments comment2 = new DBComments();
+        comment2.setComment("Comment 2");
+        comments.add(comment2);
+
+        when(commentService.getCommentsByArticle(articleId)).thenReturn(comments);
+
+        mockMvc.perform(get("/api/articles/{articleId}/comments", articleId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].comment").value("Comment 1"))
+                .andExpect(jsonPath("$[1].comment").value("Comment 2"));
+
+        verify(commentService, times(1)).getCommentsByArticle(articleId);
+    }
 }

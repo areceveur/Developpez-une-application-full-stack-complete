@@ -29,7 +29,7 @@ export class MeComponent {
               private fb: FormBuilder) {
     this.profileForm = this.fb.group({
       username: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      newEmail: ['', [Validators.required, Validators.email]]
     });
     this.passwordForm = this.fb.group({
       currentPassword: ['', Validators.required],
@@ -49,9 +49,9 @@ export class MeComponent {
           this.user = user;
 
           this.profileForm.patchValue({
-            username: user.username,
-            email: user.email
-          })
+            newEmail: user.email,
+            username: user.username
+          });
 
           return this.themeService.getThemesById();
         }
@@ -71,8 +71,22 @@ export class MeComponent {
 
   public onSubmit(): void {
     if (this.profileForm.valid) {
+
       const updatedUser = this.profileForm.value;
-      this.authService.updateUser(updatedUser).pipe(
+
+      console.log("Profile form : ", updatedUser.newEmail);
+
+      const currentEmail = this.user?.email;
+
+      const updatedRequest = {
+        currentEmail: currentEmail,
+        username: updatedUser.username,
+        newEmail: updatedUser.newEmail
+      };
+
+      console.log("Profile form updated : ", updatedRequest);
+
+      this.authService.updateUser(updatedRequest).pipe(
         switchMap(() => {
         this.snackBar.open("Le profil a été mis à jour", "Fermer", {duration: 3000});
         return of(null);
@@ -87,7 +101,7 @@ export class MeComponent {
   }
 
   public unsubscribe(themeId: number, userId: number): void {
-    this.themeService.unSubscription(themeId, userId).pipe(
+    this.themeService.unSubscribe(themeId, userId).pipe(
       switchMap(() => {
       this.subscribedThemes = this.subscribedThemes.filter(theme => theme.id !== themeId);
       this.snackBar.open("Désabonnement réussi !", "Fermer", {duration: 3000})

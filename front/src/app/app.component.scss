@@ -1,18 +1,29 @@
 .app {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+
   .link {
     cursor: pointer;
-    font-size: 16px;
+    font-size: 17px;
     text-decoration: none;
+    display: flex;
+    align-items: center;
   }
+
   .small_logo {
     width: 150px;
     height: auto;
     max-width: 100%;
-    float: left;
-  }
-
-  .link + .link {
-    margin-left: 10px;
   }
 
   .mat-icon {

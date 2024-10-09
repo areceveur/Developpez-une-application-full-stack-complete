@@ -1,5 +1,6 @@
 package com.openclassrooms.mddapi.services;
 
+import com.openclassrooms.mddapi.dto.requests.UpdateProfileRequest;
 import com.openclassrooms.mddapi.models.DBUser;
 import com.openclassrooms.mddapi.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -90,4 +91,55 @@ public class UserServiceTest {
         assertEquals("Test User", foundUser.get().getUsername());
         assertEquals("test@test.com", foundUser.get().getEmail());
     }
+
+    @Test
+    public void testUpdateUserProfile() {
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setCurrentEmail("user@test.com");
+        request.setUsername("UserTest");
+        request.setNewEmail("new@email.com");
+
+        DBUser user = new DBUser();
+        user.setUsername("UserTest");
+        user.setEmail("user@test.com");
+
+        when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
+        userService.updateUserProfile(request);
+
+        assert(user.getEmail()).equals("new@email.com");
+    }
+
+    @Test
+    public void testUpdateUserProfile_EmailAlreadyExists() {
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setCurrentEmail("user@test.com");
+        request.setNewEmail("existing@email.com");
+
+        DBUser user = new DBUser();
+        user.setEmail("user@test.com");
+
+        when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("existing@email.com")).thenReturn(Optional.of(new DBUser()));
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            userService.updateUserProfile(request);
+        });
+
+        assertEquals("L'email existing@email.com est déjà utilisé", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdateUserProfile_UserNotFound() {
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setCurrentEmail("nonexistent@test.com");
+
+        when(userRepository.findByEmail("nonexistent@test.com")).thenReturn(Optional.empty());
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            userService.updateUserProfile(request);
+        });
+
+        assertEquals("Utilisateur non trouvé avec cet email nonexistent@test.com", thrown.getMessage());
+    }
+
 }

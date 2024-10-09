@@ -71,7 +71,7 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   })
 
-  it('should create a session', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   })
 
@@ -93,7 +93,8 @@ describe('LoginComponent', () => {
       email: "user@test.com",
       username: "User Test",
       created_at: new Date(),
-      updated_at: new Date()
+      updated_at: new Date(),
+      subscriptions: []
     };
 
     authServiceMock.me = jest.fn().mockReturnValue(of(userResponse));
@@ -128,7 +129,7 @@ describe('LoginComponent', () => {
     component.form.setValue(user);
 
     const tokenResponse: TokenResponse = { token: "false-token" };
-    const userResponse: User = { id: 1, username: "testuser", email: "user@test.com", created_at: new Date(), updated_at: new Date() };
+    const userResponse: User = { id: 1, username: "testuser", email: "user@test.com", created_at: new Date(), updated_at: new Date(), subscriptions: [] };
 
     authServiceMock.login.mockReturnValue(of(tokenResponse));
     authServiceMock.me.mockReturnValue(of(userResponse));
@@ -148,7 +149,7 @@ describe('LoginComponent', () => {
     component.form.setValue(user);
 
     const tokenResponse: TokenResponse = { token: "mock-token" };
-    const userResponse: User = { id: 1, username: "testuser", email: "user@test.com", created_at: new Date(), updated_at: new Date() };
+    const userResponse: User = { id: 1, username: "testuser", email: "user@test.com", created_at: new Date(), updated_at: new Date(), subscriptions: [] };
 
     authServiceMock.login.mockReturnValue(of(tokenResponse));
     authServiceMock.me.mockReturnValue(of(userResponse));

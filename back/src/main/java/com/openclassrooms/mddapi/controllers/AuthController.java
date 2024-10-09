@@ -10,7 +10,6 @@ import com.openclassrooms.mddapi.services.JWTService;
 import com.openclassrooms.mddapi.services.SubscriptionService;
 import com.openclassrooms.mddapi.services.ThemeService;
 import com.openclassrooms.mddapi.services.UserService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -131,11 +130,16 @@ public class AuthController {
 
     @PutMapping("/me")
     public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest request) {
+        System.out.println("Requête reçue : email=" + request.getCurrentEmail() +
+                ", username=" + request.getUsername() +
+                ", newEmail=" + request.getNewEmail());
         try {
             userService.updateUserProfile(request);
             return ResponseEntity.ok().build();
         } catch (JwtException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erreur lors de la modification" + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur inattendue : " + e.getMessage());
         }
     }
 

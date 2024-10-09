@@ -73,7 +73,7 @@ export class DetailComponent implements OnInit {
 
       this.articleService.addComments(this.articleId, commentData).subscribe(() => {
         this.fetchComments();
-        this.commentForm.reset();
+        this.commentForm.reset({content: ''});
       })
     }
   }

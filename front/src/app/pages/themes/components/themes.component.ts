@@ -1,10 +1,9 @@
 import {Component, OnInit} from "@angular/core";
-import {Observable} from "rxjs";
+import {catchError, Observable, of, tap} from "rxjs";
 import {ThemesResponse} from "../interfaces/themesResponse.interface";
 import {ThemeService} from "../services/theme.service";
-import {Theme} from "../interfaces/theme.interface";
 import {SessionService} from "../../../services/session.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-themes',
@@ -31,9 +30,7 @@ export class ThemesComponent implements OnInit {
       });
 
       this.themes$ = this.themeService.getAllThemes();
-      console.log("User ID:", this.userId);
       this.themes$.subscribe((themes) => {
-        console.log('Themes:', themes);
       })
     } else {
       console.error("User is not logged in.");
@@ -48,16 +45,18 @@ export class ThemesComponent implements OnInit {
       return;
     }
     if (this.userId) {
-      this.themeService.subscription(themeId, this.userId).subscribe(() => {
+      this.themeService.subscription(themeId, this.userId).pipe(
+        tap(() => {
           this.subscribedThemes.push(themeId);
-        },
-        (error) => {
+        }),
+        catchError((error) => {
           console.error("Subscription failed", error);
-        });
+          return of(null);
+        })
+      ).subscribe();
     } else {
       console.error("UserId is undefined")
     }
-
   }
 
   public isSubscribed(theme: number): boolean {
