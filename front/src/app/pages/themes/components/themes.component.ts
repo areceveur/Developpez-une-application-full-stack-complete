@@ -23,7 +23,9 @@ export class ThemesComponent implements OnInit {
 
   ngOnInit() {
     if (this.sessionService.user) {
+
       this.userId = this.sessionService.user.id;
+      console.log(this.userId);
 
       this.themeService.getThemesById().subscribe((themes) => {
         this.subscribedThemes = themes.map(theme => theme.id);
