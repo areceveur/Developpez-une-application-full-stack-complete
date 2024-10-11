@@ -1,18 +1,16 @@
-<div>
+<div class="create-article-container">
   <mat-card>
     <mat-card-title>
-      <div>
-        <button mat-icon-button routerLink="/articles">
+      <div class="title-container">
+        <button mat-icon-button routerLink="/articles" class="back-button">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <h1>
-          Créer un nouvel article
-        </h1>
+        <h1>Créer un nouvel article</h1>
       </div>
     </mat-card-title>
     <mat-card-content *ngIf="articleForm">
-      <form [formGroup]="articleForm" (ngSubmit)="submit()">
-        <mat-form-field>
+      <form [formGroup]="articleForm" (ngSubmit)="submit()" class="article-form">
+        <mat-form-field class="form-field" appearance="outline">
           <mat-label>Thème</mat-label>
           <mat-select formControlName ="themeId" required>
             <mat-option *ngFor="let theme of theme" [value]="theme.id">
@@ -20,15 +18,15 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="form-field">
           <mat-label>Titre</mat-label>
           <input matInput formControlName="titre">
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="form-field">
           <mat-label>Contenu</mat-label>
           <textarea matInput formControlName="contenu"></textarea>
         </mat-form-field>
-        <div>
+        <div class="button-container">
           <button mat-raised-button color="primary" type="submit" [disabled]="articleForm.invalid">Créer</button>
         </div>
       </form>

@@ -6,8 +6,10 @@ import com.openclassrooms.mddapi.dto.response.CommentResponse;
 import com.openclassrooms.mddapi.mapper.ArticleMapper;
 import com.openclassrooms.mddapi.models.DBArticle;
 import com.openclassrooms.mddapi.models.DBComments;
+import com.openclassrooms.mddapi.models.DBThemes;
 import com.openclassrooms.mddapi.services.ArticleService;
 import com.openclassrooms.mddapi.services.CommentService;
+import com.openclassrooms.mddapi.services.ThemeService;
 import com.openclassrooms.mddapi.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,18 @@ import java.util.Optional;
 public class ArticleController {
     @Autowired
     private final ArticleService articleService;
+
     @Autowired
     private final UserService userService;
+
     @Autowired
     private ArticleMapper articleMapper;
+
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private ThemeService themeService;
 
     @Autowired
     public ArticleController(ArticleService articleService, UserService userService, CommentService commentService) {
@@ -59,10 +67,24 @@ public class ArticleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getArticleById(@PathVariable("id") Long id) {
-        Optional<DBArticle> dbArticle = this.articleService.getArticleById(id);
+        Optional<DBArticle> dbArticleOpt = this.articleService.getArticleById(id);
 
-        if (dbArticle.isPresent()) {
-            return ResponseEntity.ok(dbArticle.get());
+        if (dbArticleOpt.isPresent()) {
+            DBArticle dbArticle = dbArticleOpt.get();
+            String themeName = "";
+
+            if (dbArticle.getThemeId() != null) {
+                Optional<DBThemes> dbThemesOpt = themeService.getThemeById(dbArticle.getThemeId());
+                if (dbThemesOpt.isPresent()) {
+                    themeName = dbThemesOpt.get().getName();
+                }
+            }
+            ArticleRequest requestDto = articleMapper.toDto(dbArticle);
+            requestDto.setThemeName(themeName);
+            requestDto.setAuteur(dbArticle.getAuteur());
+            requestDto.setCreated_at(dbArticle.getCreated_at());
+
+            return ResponseEntity.ok(requestDto);
         } else {
             return ResponseEntity.notFound().build();
         }

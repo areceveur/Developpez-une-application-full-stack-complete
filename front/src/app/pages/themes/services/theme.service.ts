@@ -1,9 +1,8 @@
 import {Injectable} from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import {map, Observable, switchMap} from "rxjs";
+import {map, Observable} from "rxjs";
 import {Theme} from "../interfaces/theme.interface";
 import {AuthService} from "../../auth/services/auth.service";
-import {User} from "../../../interfaces/user.interface";
 
 @Injectable({
   providedIn: 'root'

@@ -36,14 +36,14 @@ export class ThemesComponent implements OnInit {
       })
     } else {
       console.error("User is not logged in.");
-      this.router.navigate(['/login'])
+      this.router.navigate(['/auth/login'])
     }
   }
 
   public subscribe(themeId: number): void {
     if (!this.sessionService.isUserLoggedIn()) {
       console.error("User is not logged in.");
-      this.router.navigate(['/login']);
+      this.router.navigate(['/auth/login']);
       return;
     }
     if (this.userId) {

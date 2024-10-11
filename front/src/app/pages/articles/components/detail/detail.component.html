@@ -6,23 +6,39 @@
   <p>{{errorMessage}}</p>
 </div>
 
-<div *ngIf="!isLoading && article">
-  <h2>{{article.titre}}</h2>
-  <p>{{article.created_at}}</p>
-  <p>{{article.auteur}}</p>
-  <p>{{article.contenu}}</p>
+<div *ngIf="!isLoading && article" class="article-detail">
+  <div class="header">
+    <button mat-icon-button class="back-button" (click)="back()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="article-title">{{article.titre}}</h2>
+  </div>
+  <div class="article-info">
+    <p class="date-author">{{article.created_at | date:'short'}} | {{article.auteur}} | {{article.themeName}}</p>
+  </div>
+  <div class="article-content">
+    <p>{{article.contenu}}</p>
+  </div>
 
-  <button mat-raised-button (click)="back()">Retour</button>
+  <hr class="separator"/>
+
 </div>
-<div>
-  <h2>Commentaires</h2>
+<div class="comment-section">
+  <h2 class="comment-title">Commentaires</h2>
 
-  <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
-    <textarea formControlName="content" placeholder="Placer un commentaire"></textarea>
-    <button type="submit" [disabled]="commentForm.invalid">Commenter</button>
+  <div *ngFor="let comment of comments" class="comment-container">
+    <span class="username">{{comment.username || 'Utilisateur inconnu'}}</span>
+    <div class="comment-box">
+      <p class="comment-text">{{comment.comment}}</p>
+    </div>
+  </div>
+
+  <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="comment-form">
+    <textarea formControlName="content" placeholder="Contenu du commentaire"></textarea>
+    <button type="submit" [disabled]="commentForm.invalid" mat-icon-button>
+      <mat-icon>send</mat-icon>
+    </button>
   </form>
 
-  <div *ngFor="let comment of comments">
-    <p>{{comment.comment}} - <i>{{comment.username || 'Utilisateur inconnu'}}</i></p>
-  </div>
+
 </div>

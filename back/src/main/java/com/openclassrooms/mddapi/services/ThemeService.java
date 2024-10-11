@@ -50,4 +50,8 @@ public class ThemeService {
     public Iterable<DBThemes> getThemesByIds(List<Long> themesId) {
         return themeRepository.findAllById(themesId);
     }
+
+    public Optional<DBThemes> getThemeById(Long themeId) {
+        return themeRepository.findById(themeId);
+    }
 }

@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {User} from "../interfaces/user.interface";
 import {BehaviorSubject, Observable} from "rxjs";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +9,16 @@ import {BehaviorSubject, Observable} from "rxjs";
 
 export class SessionService {
 
-  constructor() {
+  constructor(private httpClient: HttpClient) {
     const token = localStorage.getItem('token');
     if (token) {
+      this.httpClient.get<User>('api/auth/me').subscribe(user => {
+        this.user = user;
+        this.isLogged = true;
+        this.next();
+        }, () => {
+        this.logOut();
+      })
       this.isLogged = true;
       this.next();
     }

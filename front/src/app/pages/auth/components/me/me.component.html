@@ -1,42 +1,43 @@
 <div *ngIf="user; else loading">
-  <h2>Profil utilisateur</h2>
+  <h2 class="profile-title">Profil utilisateur</h2>
 
-  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+    <mat-form-field class="form-field">
       <mat-label>Nom d'utilisateur</mat-label>
       <input matInput formControlName="username" required>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="form-field">
       <mat-label>Email</mat-label>
       <input matInput formControlName="newEmail" required>
     </mat-form-field>
-
-    <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid">
-      Mettre à jour le profil
-    </button>
   </form>
 
-  <h3>Mettre à jour le mot de passe</h3>
-  <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
-    <mat-form-field>
+  <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="password-form">
+    <mat-form-field class="form-field">
       <mat-label>Mot de passe actuel</mat-label>
       <input matInput formControlName="currentPassword" type="password" required>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="form-field">
       <mat-label>Nouveau mot de passe</mat-label>
       <input matInput formControlName="newPassword" type="password" required>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="passwordForm.invalid">Enregistrer</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid" class="update-button">
+      Mettre à jour le profil
+    </button>
   </form>
 
+  <button mat-raised-button color="warn" class="logout-button" (click)="logout()">Se déconnecter</button>
+
+  <hr class="separator" />
+
   <div class="abonnements">
-    <h3>Abonnements</h3>
-    <div class="item">
+    <h2 class="subscription-title">Abonnements</h2>
+    <div class="themes-container">
       <ng-container *ngIf="subscribedThemes?.length; else emptyThemes">
-        <mat-card *ngFor="let theme of subscribedThemes">
+        <mat-card *ngFor="let theme of subscribedThemes; let i = index" class="theme-card">
           <mat-card-header>
             <mat-card-title>
               {{theme.name}}
@@ -50,6 +51,7 @@
               <span>Se désabonner</span>
             </button>
           </mat-card-content>
+          <div *ngIf="(i + 1) % 2 === 0" class="spacer"></div>
         </mat-card>
       </ng-container>
       <ng-template #emptyThemes>
@@ -57,9 +59,6 @@
       </ng-template>
     </div>
   </div>
-
-  <button mat-raised-button color="primary" (click)="back()">Retour</button>
-  <button mat-raised-button color="warn" (click)="logout()">Se déconnecter</button>
 </div>
 <ng-template #loading>
   <p>Chargement des informations...</p>

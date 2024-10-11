@@ -20,5 +20,5 @@ public class DBArticle {
     private Date created_at;
     private Date updated_at;
     private String auteur;
-    private String themeId;
+    private Long themeId;
 }

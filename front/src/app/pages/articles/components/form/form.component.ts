@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Article} from "../../interfaces/article.interface";
 import {SessionService} from "../../../../services/session.service";
@@ -38,7 +38,8 @@ export class FormComponent implements OnInit {
   public submit(): void {
     const articleData = {
       titre: this.articleForm!.get("titre")?.value,
-      contenu: this.articleForm!.get("contenu")?.value
+      contenu: this.articleForm!.get("contenu")?.value,
+      themeId: this.articleForm!.get("themeId")?.value,
     };
 
     this.articlesService.create(articleData).subscribe((response) => {

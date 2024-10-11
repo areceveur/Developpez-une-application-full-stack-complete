@@ -34,6 +34,7 @@ public class ArticleService {
         dbArticle.setAuteur(auteur);
         dbArticle.setCreated_at(new Date());
         dbArticle.setUpdated_at(new Date());
+        dbArticle.setThemeId(dbArticle.getThemeId());
 
         return articleRepository.save(dbArticle);
     }

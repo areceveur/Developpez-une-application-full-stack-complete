@@ -1,16 +1,16 @@
 <div class="articles">
-  <button mat-raised-button color="primary" routerLink="create">
-    <mat-icon>add</mat-icon>
-    <span>Créer un article</span>
-  </button>
-  <div>
+  <div class="actions">
+    <button mat-raised-button color="primary" routerLink="create">
+      <mat-icon>add</mat-icon>
+      <span>Créer un article</span>
+    </button>
     <button mat-raised-button color="primary" (click)="toggleSortOrder()">
       <mat-icon>arrow_downward</mat-icon>
       <span>Trier par ordre {{ sortOrder === 'asc' ? 'croissant' : 'décroissant' }}</span>
     </button>
   </div>
 
-  <div class="item">
+  <div class="item-list">
     <ng-container *ngIf="articles.length ; else emptyArticles">
       <mat-card class="item" *ngFor="let article of articles" [routerLink]="['/article', article.id]">
         <mat-card-header>
@@ -20,17 +20,15 @@
         </mat-card-header>
         <mat-card-content>
           <div class="side-by-side">
-            <p>{{article.created_at | date:'short'}}</p>
-            <p>{{article.auteur}}</p>
+            <p class="article-date">{{article.created_at | date:'short'}}</p>
+            <p class="article-author">{{article.auteur}}</p>
           </div>
-          <div>
-            <p>
-              {{article.contenu | slice:0:100}}...
-            </p>
+          <div class="article-body">
+            <p>{{article.contenu | slice:0:100}}...</p>
           </div>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button color="accent" [routerLink]="['/article', article.id]">Voir plus</button>
+          <button mat-raised-button color="primary" [routerLink]="['/article', article.id]">Voir plus</button>
         </mat-card-actions>
       </mat-card>
     </ng-container>
