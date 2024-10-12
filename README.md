@@ -1,25 +1,107 @@
-# P6-Full-Stack-reseau-dev
+# Projet 6 - MDD - Monde de Dev
 
-## Front
+## Description du projet
+MDD (Monde de Dev) est un réseau social dédié aux développeurs, visant à faciliter les échanges et la collaboration entre pairs.
+Le but est d'aider les développeurs à se connecter, à partager des articles et à commenter des sujets liés à la programmation.
+MDD pourrait également devenir une source de recrutement pour les entreprises cherchant des talents dans le domaine du développement.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.3.
+Cette version est un **MVP** (Minimum Viable Product) déployé en interne,
+permettant aux utilisateurs de s'abonner à des thèmes liés à la programmation comme **Java**, **JavaScript**, **Python** ou **Web3**.
+Les utilisateurs peuvent publier des articles, suivre des thèmes et commenter des publications.
 
-Don't forget to install your node_modules before starting (`npm install`).
+## Fonctionnalités
 
-### Development server
+L'application permet :
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Aux utilisateurs de s'inscrire et de se connecter
+- Afficher des articles triés chronologiquement
+- Parcourir la liste des thèmes de programmation et de s'y abonner
+- Écrire des articles et des commentaires
+- Gérer son profil utilisateur, en modifiant ses informations personnelles et en gérant les abonnements aux thèmes
 
-### Build
+## Technologies utilisées
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- **Back-end** : Spring Boot avec Spring Security pour la sécurisation via JWT
+- **Front-end** : Angular, pour une interface utilisateur dynamique et réactive
+- **Base de données** : MySQL avec Spring Data JPA pour la gestion des données
+- **Authentification** : JSON Web Token (JWT) pour la gestion des sessions utilisateur
+- **Tests** : 
+  - Junit et Mockito pour les tests unitaires back-end
+  - Jest pour les tests front-end
 
-### Where to start
+## Installation
 
-As you may have seen if you already started the app, a simple home page containing a logo, a title and a button is available. If you take a look at its code (in the `home.component.html`) you will see that an external UI library is already configured in the project.
+1. Cloner le repository
 
-This library is `@angular/material`, it's one of the most famous in the angular ecosystem. As you can see on their docs (https://material.angular.io/), it contains a lot of highly customizable components that will help you design your interfaces quickly.
+> git clone https://github.com/areceveur/Developpez-une-application-full-stack-complete.git
+>
+> cd Developpez-une-application-full-stack-complete
 
-Note: I recommend to use material however it's not mandatory, if you prefer you can get ride of it.
+2. Back-end
 
-Good luck!
+Assurez vous d'avoir Java17 et Maven installés.
+
+Configurez la base de données à partir du fichier back/scr/main/resources/script.sql
+
+Lancer le back-end
+
+> mvn: spring-boot:run
+
+3. Front-end
+
+Assurez-vous d'avoir Node.js et Angular CLI installés.
+
+Installez les dépendances du projet :
+
+> cd front
+> 
+> npm install
+
+Lancer le serveur de déveleppement
+
+> ng serve
+
+4. Accéder à l'application
+
+- Front-end : http://localhost:4200
+- Back-end : http://localhost:8080
+
+## Structure du projet
+
+/back       -> Code du back-end (Java, Spring Boot)
+
+/front      -> Code du front-end (Angular)
+
+/cypress    -> Tests end-to-end (Cypress)
+
+## API endpoints
+
+- POST /api/auth/login : Authentification de l'utilisateur.
+- POST /api/auth/register : Inscription d'un nouvel utilisateur.
+- GET /api/articles : Récupérer tous les articles.
+- POST /api/articles/create : Créer un nouvel article.
+- POST /api/articles/{id}/comments : Ajouter un commentaire à un article.
+- GET /api/themes : Liste de tous les thèmes.
+
+
+
+## Tests
+
+- Back-end : les tests unitaires sont disponibles avec JUnit et Mockito.
+
+Lancer les tests :
+
+> mvn test
+
+- Front-end : Lles tests unitaires pour Angular sont configurés avec Jest.
+
+Lancer les tests :
+
+> npm run test
+
+## Contributeurs
+
+- Orlando : Responsable du projet
+- Heidi : Développeur back-end initial
+- Juana : Designer UX
+- Anne-Elodie : Développeur chargé de finaliser le MVP
