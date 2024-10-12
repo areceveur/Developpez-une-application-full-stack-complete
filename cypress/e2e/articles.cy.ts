@@ -21,7 +21,7 @@ describe('Article list and creation', () => {
         cy.get('button[type="submit"]').click();
     })
 
-    it('Should display a detailed session', () => {
+    it('Should display a detailed article', () => {
         cy.contains('mat-card', "Test").within(() => {
             cy.contains('button', 'Voir plus').click();
         });
