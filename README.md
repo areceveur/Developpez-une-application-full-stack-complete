@@ -1,4 +1,4 @@
-# Projet 6 - MDD - Monde de Dev
+# Projet 6 - MDD (Monde de Dev)
 
 ## Description du projet
 MDD (Monde de Dev) est un réseau social dédié aux développeurs, visant à faciliter les échanges et la collaboration entre pairs.
@@ -43,7 +43,7 @@ Assurez vous d'avoir Java17 et Maven installés.
 
 Configurez la base de données à partir du fichier back/scr/main/resources/script.sql
 
-Lancer le back-end
+Lancez le back-end :
 
 > mvn: spring-boot:run
 
@@ -57,7 +57,7 @@ Installez les dépendances du projet :
 > 
 > npm install
 
-Lancer le serveur de déveleppement
+Lancez le serveur de déveleppement
 
 > ng serve
 
