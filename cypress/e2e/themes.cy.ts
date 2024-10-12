@@ -3,8 +3,8 @@ describe('Theme list', () => {
     it('Should visit the theme page', () => {
         cy.clearLocalStorage();
         cy.visit('/auth/login');
-        cy.get('input[formControlName="email"]').type("user@test.com");
-        cy.get('input[formControlName="password"]').type("UserTest@1234");
+        cy.get('input[formControlName="email"]').type("new@user.com");
+        cy.get('input[formControlName="password"]').type("NewUser@1234");
         cy.get('button[type="submit"]').click();
     });
 
@@ -18,15 +18,12 @@ describe('Theme list', () => {
         })
     });
 
-    it('Should display the unsucription correctly', () => {
+    it('Should display the unsubscription correctly', () => {
         cy.get(`.mat-icon`).click();
 
         cy.contains('mat-card-content', 'Ensemble de règles et de syntaxes permettant d\'écrire des programmes qui seront exécutés par un ordinateur').within(() => {
             cy.contains('button', 'Se désabonner').click();
         });
-
-        cy.contains("button", "Retour").click();
-
     })
 
 })

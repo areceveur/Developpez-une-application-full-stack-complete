@@ -6,8 +6,10 @@ import com.openclassrooms.mddapi.mapper.ArticleMapper;
 import com.openclassrooms.mddapi.mapper.ArticleMapperImpl;
 import com.openclassrooms.mddapi.models.DBArticle;
 import com.openclassrooms.mddapi.models.DBComments;
+import com.openclassrooms.mddapi.models.DBThemes;
 import com.openclassrooms.mddapi.services.ArticleService;
 import com.openclassrooms.mddapi.services.CommentService;
+import com.openclassrooms.mddapi.services.ThemeService;
 import com.openclassrooms.mddapi.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,6 +54,9 @@ public class ArticleControllerTest {
 
     @MockBean
     private CommentService commentService;
+
+    @MockBean
+    private ThemeService themeService;
 
     @BeforeEach
     public void setUp() {
@@ -86,13 +92,13 @@ public class ArticleControllerTest {
         ArticleRequest articleRequest = new ArticleRequest();
         articleRequest.setTitre("Titre de l'article");
         articleRequest.setContenu("Contenu de l'article");
-        articleRequest.setThemeId("Développement web");
+        articleRequest.setThemeId(1L);
 
         DBArticle createdArticle = new DBArticle();
         createdArticle.setId(1L);
         createdArticle.setTitre("Titre de l'article");
         createdArticle.setContenu("Contenu de l'article");
-        createdArticle.setThemeId("Développement web");
+        createdArticle.setThemeId(1L);
         createdArticle.setOwner_id(ownerId);
         createdArticle.setCreated_at(new Date());
         createdArticle.setUpdated_at(new Date());
@@ -117,29 +123,37 @@ public class ArticleControllerTest {
         ArticleRequest articleRequest = new ArticleRequest();
         articleRequest.setTitre("Test Title");
         articleRequest.setContenu("Test Content");
-        articleRequest.setThemeId("Test Theme");
+        articleRequest.setThemeId(1L);
 
         DBArticle dbArticle = articleMapper.toEntity(articleRequest);
 
         assertEquals("Test Title", dbArticle.getTitre());
         assertEquals("Test Content", dbArticle.getContenu());
-        assertEquals("Test Theme", dbArticle.getThemeId());
+        assertEquals(1L, dbArticle.getThemeId());
     }
 
     @WithMockUser(username = "user@test.com", roles = "USER")
     @Test
     public void testGetArticleById() throws Exception {
         DBArticle dbArticle = new DBArticle();
-        dbArticle.setId(1L);
+        dbArticle.setId(16L);
         dbArticle.setTitre("Article 1");
+        dbArticle.setContenu("Contenu");
+        dbArticle.setThemeId(1L);
+        dbArticle.setCreated_at(new Date());
+        dbArticle.setAuteur("User Test");
 
-        when(articleService.getArticleById(1L)).thenReturn(Optional.of(dbArticle));
+        DBThemes dbTheme = new DBThemes();
+        dbTheme.setId(1L);
+        dbTheme.setName("Thème Test");
+        when(themeService.getThemeById(1L)).thenReturn(Optional.of(dbTheme));
+        when(articleService.getArticleById(16L)).thenReturn(Optional.of(dbArticle));
 
-        mockMvc.perform(get("/api/articles/{id}", 1L))
+        mockMvc.perform(get("/api/articles/{id}", 16L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.titre").value("Article 1"));
 
-        verify(articleService, times(1)).getArticleById(1L);
+        verify(articleService, times(1)).getArticleById(16L);
     }
 
     @WithMockUser(username = "user@test.com")

@@ -19,7 +19,8 @@ describe('ArticleService', () => {
       updated_at: new Date("2024-10-06"),
       owner_id: 1,
       auteur: "UserTest",
-      themeId: "1",
+      themeId: 1,
+      themeName: "Langages de programmation"
     },
     {
       id: 2,
@@ -29,7 +30,8 @@ describe('ArticleService', () => {
       updated_at: new Date("2024-08-04"),
       owner_id: 1,
       auteur: "UserTest",
-      themeId: "2",
+      themeId: 2,
+      themeName: "Paradigmes de programmation"
     }
   ];
 

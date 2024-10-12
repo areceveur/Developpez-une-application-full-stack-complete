@@ -57,7 +57,7 @@ describe('ThemesComponent', () => {
     sessionServiceMock.user = null;
     component.ngOnInit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 
   it('Should subscribe to a theme', () => {
@@ -88,7 +88,7 @@ describe('ThemesComponent', () => {
 
     component.subscribe(1);
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 
 })

@@ -14,8 +14,8 @@ describe('articlesComponent', () => {
   let articlesServiceMock: any;
 
   const mockArticles: Article[] = [
-    { id: 1, titre: 'Article 1', contenu: 'Contenu 1', created_at: new Date, updated_at: new Date, auteur: "UserTest", themeId: "Développement web", owner_id: 1 },
-    { id: 2, titre: 'Article 2', contenu: 'Contenu 2', created_at: new Date, updated_at: new Date, auteur: "TestUser", themeId: "Langages de programmation", owner_id: 2 }
+    { id: 1, titre: 'Article 1', contenu: 'Contenu 1', created_at: new Date, updated_at: new Date, auteur: "UserTest", themeName: "Développement web", owner_id: 1, themeId: 3 },
+    { id: 2, titre: 'Article 2', contenu: 'Contenu 2', created_at: new Date, updated_at: new Date, auteur: "TestUser", themeName: "Langages de programmation", owner_id: 2, themeId: 1 }
   ];
 
   beforeEach(async () => {

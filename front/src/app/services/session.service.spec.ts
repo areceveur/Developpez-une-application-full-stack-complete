@@ -1,18 +1,30 @@
 import {SessionService} from "./session.service";
-import {fakeAsync, TestBed, tick} from "@angular/core/testing";
+import {TestBed} from "@angular/core/testing";
 import {User} from "../interfaces/user.interface";
+import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 
 describe('SessionService', () => {
   let service: SessionService;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [SessionService]
+    });
     service = TestBed.inject(SessionService);
-    localStorage.clear();
+    httpMock = TestBed.inject(HttpTestingController);
+    localStorage.setItem('token', 'false-token');
+
   });
 
+  afterEach(() => {
+    httpMock.verify();
+    localStorage.removeItem('token');
+  });
+
+
   it('should be created', () => {
-    service = TestBed.inject(SessionService);
     expect(service).toBeTruthy();
   });
 
@@ -25,7 +37,6 @@ describe('SessionService', () => {
       updated_at: new Date(),
       subscriptions: []
     };
-    service = TestBed.inject(SessionService);
     service.logIn(mockUser);
     service.logOut();
 
@@ -36,7 +47,6 @@ describe('SessionService', () => {
   it('should update $isLogged observable when logging in and out', () => {
     let loggedStates: boolean[] = [];
 
-    service = TestBed.inject(SessionService);
     service.$isLogged().subscribe((isLogged) => {
       loggedStates.push(isLogged);
 
@@ -67,16 +77,34 @@ describe('SessionService', () => {
       updated_at: new Date(),
       subscriptions: []
     };
-    service = TestBed.inject(SessionService);
     service.logIn(mockUser);
 
     expect(service.isUserLoggedIn()).toBe(true);
   });
 
   it('should return false when no user is logged in', () => {
-    service = TestBed.inject(SessionService);
     service.logOut();
     expect(service.isUserLoggedIn()).toBe(false);
+  });
+
+  it('should retrieve user on initialization if token is present', () => {
+    const mockUser: User = {
+      id: 1,
+      username: "UserTest",
+      email: "user@test.com",
+      created_at: new Date(),
+      updated_at: new Date(),
+      subscriptions: []
+    };
+
+    service['httpClient'].get<User>('api/auth/me').subscribe(user => {
+      expect(user).toEqual(mockUser);
+      expect(service.isUserLoggedIn()).toBe(true);
+      expect(service.user).toEqual(mockUser);
+    });
+
+    const req = httpMock.expectOne('api/auth/me');
+    req.flush(mockUser);
   });
 
 })

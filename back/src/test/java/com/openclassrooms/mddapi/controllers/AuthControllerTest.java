@@ -28,14 +28,15 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -187,7 +188,7 @@ public class AuthControllerTest {
         updateProfileRequest.setUsername("NewUser");
         updateProfileRequest.setNewEmail("newemail@test.com");
 
-        Mockito.doThrow(new JwtException("Invalid token"))
+        doThrow(new JwtException("Invalid token"))
                 .when(userService).updateUserProfile(Mockito.any(UpdateProfileRequest.class));
 
         mockMvc.perform(put("/api/auth/me")

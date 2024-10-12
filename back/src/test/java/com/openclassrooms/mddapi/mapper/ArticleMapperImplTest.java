@@ -40,7 +40,7 @@ public class ArticleMapperImplTest {
     @Test
     public void toDtoTest() {
         DBArticle dbArticle = new DBArticle();
-        dbArticle.setThemeId("Développement web");
+        dbArticle.setThemeId(1L);
         dbArticle.setContenu("Contenu de l'article");
         dbArticle.setTitre("Titre de l'article");
 

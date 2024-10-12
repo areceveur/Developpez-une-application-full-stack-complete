@@ -82,7 +82,7 @@ describe('FormComponent', () => {
   })
 
   it('Should initialize the form correctly and navigate if the article owner is different', () => {
-    const mockArticle: Article = { id: 1, titre: 'Test', contenu: 'Contenu', owner_id: 2, themeId: "1", created_at: new Date,  updated_at: new Date, auteur: "UserTest"};
+    const mockArticle: Article = { id: 1, titre: 'Test', contenu: 'Contenu', owner_id: 2, themeId: 1, created_at: new Date,  updated_at: new Date, auteur: "UserTest", themeName: "Langages de programmation"};
 
     jest.spyOn(mockRouter, 'navigate');
 

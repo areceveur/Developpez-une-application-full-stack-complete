@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class ThemeServiceTest {
@@ -106,5 +106,21 @@ public class ThemeServiceTest {
         when(themeRepository.findAllById(themeIds)).thenReturn(themesList);
         Iterable<DBThemes> result = themeService.getThemesByIds(themeIds);
         assertEquals(themesList, result);
+    }
+
+    @Test
+    public void testGetThemeById_ReturnsTheme() {
+        DBThemes theme = new DBThemes();
+        theme.setId(1L);
+        theme.setName("Test Theme");
+
+        when(themeRepository.findById(1L)).thenReturn(Optional.of(theme));
+
+        Optional<DBThemes> result = themeService.getThemeById(1L);
+
+        assertTrue(result.isPresent());
+        assertEquals("Test Theme", result.get().getName());
+
+        verify(themeRepository, times(1)).findById(1L);
     }
 }

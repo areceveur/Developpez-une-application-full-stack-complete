@@ -79,8 +79,10 @@ public class ArticleController {
                     themeName = dbThemesOpt.get().getName();
                 }
             }
-            ArticleRequest requestDto = articleMapper.toDto(dbArticle);
+
+            ArticleRequest requestDto = new ArticleRequest();
             requestDto.setThemeName(themeName);
+            requestDto.setTitre(dbArticle.getTitre());
             requestDto.setAuteur(dbArticle.getAuteur());
             requestDto.setCreated_at(dbArticle.getCreated_at());
 

@@ -11,13 +11,13 @@
     <button mat-icon-button class="back-button" (click)="back()">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <h2 class="article-title">{{article.titre}}</h2>
+    <h2 class="article-title">{{article?.titre}}</h2>
   </div>
   <div class="article-info">
-    <p class="date-author">{{article.created_at | date:'short'}} | {{article.auteur}} | {{article.themeName}}</p>
+    <p class="date-author">{{article?.created_at | date:'short'}} | {{article?.auteur}} | {{article?.themeName}}</p>
   </div>
   <div class="article-content">
-    <p>{{article.contenu}}</p>
+    <p>{{article?.contenu}}</p>
   </div>
 
   <hr class="separator"/>

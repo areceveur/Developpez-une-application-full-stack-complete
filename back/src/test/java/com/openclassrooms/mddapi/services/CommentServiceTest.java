@@ -44,7 +44,7 @@ public class CommentServiceTest {
     @Test
     public void testAddComment() throws Exception {
         DBArticle dbArticle = new DBArticle();
-        dbArticle.setId(1L);
+        dbArticle.setId(16L);
         dbArticle.setTitre("Titre");
         dbArticle.setContenu("Contenu");
 
@@ -57,11 +57,11 @@ public class CommentServiceTest {
         dbComments.setUser(dbUser);
         dbComments.setComment("Comment");
 
-        when(articleRepository.findById(1L)).thenReturn(Optional.of(dbArticle));
+        when(articleRepository.findById(16L)).thenReturn(Optional.of(dbArticle));
         when(userRepository.findById(1L)).thenReturn(Optional.of(dbUser));
         when(commentRepository.save(any(DBComments.class))).thenReturn(dbComments);
 
-        DBComments createdComment = commentService.addComment(1L, 1L, "Comment");
+        DBComments createdComment = commentService.addComment(16L, 1L, "Comment");
 
         assertNotNull(createdComment);
         assertEquals("Comment", createdComment.getComment());
@@ -70,9 +70,9 @@ public class CommentServiceTest {
     @Test
     public void testAddCommentAndGetCommentsByArticle() throws Exception {
         DBArticle article = new DBArticle();
-        article.setId(1L);
+        article.setId(16L);
 
-        when(articleRepository.findById(1L)).thenReturn(Optional.of(article));
+        when(articleRepository.findById(16L)).thenReturn(Optional.of(article));
 
         DBComments comment = new DBComments();
         comment.setComment("This is a test comment.");
@@ -80,7 +80,7 @@ public class CommentServiceTest {
 
         when(commentRepository.save(any(DBComments.class))).thenReturn(comment);
 
-        DBComments createdComment = commentService.addComment(1L, 1L, "This is a test comment.");
+        DBComments createdComment = commentService.addComment(16L, 1L, "This is a test comment.");
 
         assertNotNull(createdComment);
         assertEquals("This is a test comment.", createdComment.getComment());
@@ -88,9 +88,9 @@ public class CommentServiceTest {
         List<DBComments> comments = new ArrayList<>();
         comments.add(createdComment);
 
-        when(commentRepository.findByArticleId(1L)).thenReturn(comments);
+        when(commentRepository.findByArticleId(16L)).thenReturn(comments);
 
-        List<DBComments> result = commentService.getCommentsByArticle(1L);
+        List<DBComments> result = commentService.getCommentsByArticle(16L);
         assertEquals(1, result.size());
         assertEquals("This is a test comment.", result.get(0).getComment());
     }

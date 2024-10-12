@@ -19,8 +19,8 @@ export class SessionService {
         }, () => {
         this.logOut();
       })
-      this.isLogged = true;
-      this.next();
+    } else {
+      this.isLogged = false;
     }
   }
 
@@ -51,6 +51,6 @@ export class SessionService {
   }
 
   public isUserLoggedIn(): boolean {
-    return !!this.user;
+    return this.isLogged;
   }
 }

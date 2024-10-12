@@ -11,17 +11,20 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {expect} from '@jest/globals'
 import {of, throwError} from "rxjs";
 import {User} from "../../../../interfaces/user.interface";
+import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let authServiceMock: any;
   let routerMock: any;
+  let httpMock: HttpTestingController;
 
   beforeEach(async() => {
 
     authServiceMock = {
-      register: jest.fn().mockReturnValue(of(true))
+      register: jest.fn().mockReturnValue(of(true)),
+      me: jest.fn()
     };
 
     routerMock = {
@@ -41,12 +44,14 @@ describe('RegisterComponent', () => {
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        HttpClientTestingModule
       ]
     })
       .compileComponents();
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
+    httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
   })
 

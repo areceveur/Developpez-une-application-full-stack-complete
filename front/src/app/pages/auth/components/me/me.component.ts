@@ -45,7 +45,6 @@ export class MeComponent {
     this.authService.me().pipe(
       switchMap((user: User | null) => {
         if (user) {
-          console.log("Récupération de l'utilisateur", user)
           this.user = user;
 
           this.profileForm.patchValue({
