@@ -10,8 +10,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class SubscriptionService {
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+    private final SubscriptionRepository subscriptionRepository;
+
+    public SubscriptionService(SubscriptionRepository subscriptionRepository) {
+        this.subscriptionRepository = subscriptionRepository;
+    }
 
     public List<SubscriptionRequest> getSubscriptionsByUserId(Long userId) {
         return subscriptionRepository.findByUser_Id(userId)

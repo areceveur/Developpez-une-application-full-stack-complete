@@ -6,8 +6,6 @@ import {RegisterComponent} from "./pages/auth/components/register/register.compo
 import {MeComponent} from "./pages/auth/components/me/me.component";
 import {AuthGuard} from  "./guards/auth.gard";
 
-// consider a guard combined with canLoad / canActivate route option
-// to manage unauthenticated user to access private routes
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'auth/login', component: LoginComponent },

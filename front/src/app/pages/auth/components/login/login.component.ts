@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnDestroy} from "@angular/core";
 import {FormBuilder, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {LoginRequest} from "../../interfaces/LoginRequest.interface";
@@ -6,7 +6,7 @@ import {User} from "../../../../interfaces/user.interface";
 import {SessionService} from "../../../../services/session.service";
 import {AuthService} from "../../services/auth.service";
 import {PasswordValidator} from "../../services/password.validator";
-import {catchError, of, switchMap} from "rxjs";
+import {catchError, of, Subject, switchMap, takeUntil} from "rxjs";
 import {TokenResponse} from "../../../../interfaces/tokenResponse.interface";
 
 
@@ -16,9 +16,10 @@ import {TokenResponse} from "../../../../interfaces/tokenResponse.interface";
   styleUrls: ['./login.component.scss']
 })
 
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   public onError = false;
   public hide = true;
+  private destroy$ = new Subject<boolean>();
 
   constructor(private authService: AuthService,
               private fb: FormBuilder,
@@ -42,7 +43,8 @@ export class LoginComponent {
       console.error('Erreur de connexion :', error);
       this.onError = true;
       return of(null);
-    })
+    }),
+      takeUntil(this.destroy$)
     ).subscribe((user: User | null) => {
       if(user) {
         this.sessionService.logIn(user);
@@ -53,5 +55,10 @@ export class LoginComponent {
 
   public back(): void {
     window.history.back();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

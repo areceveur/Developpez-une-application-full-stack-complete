@@ -2,7 +2,6 @@ import {Injectable} from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import {map, Observable} from "rxjs";
 import {Theme} from "../interfaces/theme.interface";
-import {AuthService} from "../../auth/services/auth.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +9,7 @@ import {AuthService} from "../../auth/services/auth.service";
 export class ThemeService {
   private apiUrl = 'api/themes'
 
-  constructor(private httpClient: HttpClient, private authService: AuthService) {}
+  constructor(private httpClient: HttpClient) {}
 
   public getAllThemes(): Observable<Theme[]> {
     return this.httpClient.get<Theme[]>(this.apiUrl);

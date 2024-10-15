@@ -33,9 +33,6 @@ public class SpringSecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll();
-                    auth.requestMatchers("/api/articles/**").authenticated();
-                    auth.requestMatchers("/api/themes/**").authenticated();
-                    auth.requestMatchers("/api/auth/me").authenticated();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

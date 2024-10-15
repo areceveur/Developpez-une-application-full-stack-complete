@@ -1,5 +1,5 @@
-import {Component, OnInit} from "@angular/core";
-import {catchError, Observable, of, tap} from "rxjs";
+import {Component, OnDestroy, OnInit} from "@angular/core";
+import {catchError, Observable, of, Subject, takeUntil, tap} from "rxjs";
 import {ThemesResponse} from "../interfaces/themesResponse.interface";
 import {ThemeService} from "../services/theme.service";
 import {SessionService} from "../../../services/session.service";
@@ -10,10 +10,11 @@ import {Router} from "@angular/router";
   templateUrl: './themes.component.html',
   styleUrls: ['./themes.component.scss']
 })
-export class ThemesComponent implements OnInit {
+export class ThemesComponent implements OnInit, OnDestroy {
   public themes$!: Observable<ThemesResponse>;
   public userId!: number;
   public subscribedThemes: number[] = [];
+  private destroy$ = new Subject<boolean>();
 
   constructor(
     private themeService: ThemeService,
@@ -25,14 +26,13 @@ export class ThemesComponent implements OnInit {
     if (this.sessionService.user) {
 
       this.userId = this.sessionService.user.id;
-      console.log(this.userId);
 
       this.themeService.getThemesById().subscribe((themes) => {
         this.subscribedThemes = themes.map(theme => theme.id);
       });
 
       this.themes$ = this.themeService.getAllThemes();
-      this.themes$.subscribe((themes) => {
+      this.themes$.pipe(takeUntil(this.destroy$)).subscribe((themes) => {
       })
     } else {
       console.error("User is not logged in.");
@@ -54,7 +54,8 @@ export class ThemesComponent implements OnInit {
         catchError((error) => {
           console.error("Subscription failed", error);
           return of(null);
-        })
+        }),
+        takeUntil(this.destroy$)
       ).subscribe();
     } else {
       console.error("UserId is undefined")
@@ -63,5 +64,10 @@ export class ThemesComponent implements OnInit {
 
   public isSubscribed(theme: number): boolean {
     return this.subscribedThemes.includes(theme);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

@@ -23,26 +23,19 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/articles")
 public class ArticleController {
-    @Autowired
     private final ArticleService articleService;
-
-    @Autowired
     private final UserService userService;
+    private final ArticleMapper articleMapper;
+    private final CommentService commentService;
+    private final ThemeService themeService;
 
     @Autowired
-    private ArticleMapper articleMapper;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private ThemeService themeService;
-
-    @Autowired
-    public ArticleController(ArticleService articleService, UserService userService, CommentService commentService) {
+    public ArticleController(ArticleService articleService, UserService userService, CommentService commentService, ArticleMapper articleMapper, ThemeService themeService) {
         this.articleService = articleService;
         this.userService = userService;
         this.commentService = commentService;
+        this.articleMapper = articleMapper;
+        this.themeService = themeService;
     }
 
     @GetMapping()
@@ -84,6 +77,7 @@ public class ArticleController {
             requestDto.setThemeName(themeName);
             requestDto.setTitre(dbArticle.getTitre());
             requestDto.setAuteur(dbArticle.getAuteur());
+            requestDto.setContenu(dbArticle.getContenu());
             requestDto.setCreated_at(dbArticle.getCreated_at());
 
             return ResponseEntity.ok(requestDto);

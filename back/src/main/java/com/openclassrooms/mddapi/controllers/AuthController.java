@@ -2,10 +2,8 @@ package com.openclassrooms.mddapi.controllers;
 
 import com.openclassrooms.mddapi.dto.requests.*;
 import com.openclassrooms.mddapi.dto.response.TokenResponse;
-import com.openclassrooms.mddapi.mapper.UserMapperImpl;
 import com.openclassrooms.mddapi.models.DBThemes;
 import com.openclassrooms.mddapi.models.DBUser;
-import com.openclassrooms.mddapi.repository.UserRepository;
 import com.openclassrooms.mddapi.services.JWTService;
 import com.openclassrooms.mddapi.services.SubscriptionService;
 import com.openclassrooms.mddapi.services.ThemeService;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -36,21 +33,17 @@ public class AuthController {
     private final JWTService jwtService;
     private final JwtDecoder jwtDecoder;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserRepository userRepository;
     private final SubscriptionService subscriptionService;
     private final ThemeService themeService;
-    private final UserMapperImpl userMapperImpl;
 
     @Autowired
-    public AuthController(UserService userService, JWTService jwtService, JwtDecoder jwtDecoder, BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository, SubscriptionService subscriptionService, ThemeService themeService, UserMapperImpl userMapperImpl) {
+    public AuthController(UserService userService, JWTService jwtService, JwtDecoder jwtDecoder, BCryptPasswordEncoder bCryptPasswordEncoder , SubscriptionService subscriptionService, ThemeService themeService) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.jwtDecoder = jwtDecoder;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userRepository = userRepository;
         this.subscriptionService = subscriptionService;
         this.themeService = themeService;
-        this.userMapperImpl = userMapperImpl;
     }
 
     @PostMapping("/login")
@@ -59,9 +52,6 @@ public class AuthController {
         Optional<DBUser> user = userService.getUserByEmail(loginRequest.getEmail());
         if (user.isPresent() && bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
             String token = jwtService.generateToken(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), null), user.get().getId());
-            DBUser foundUser = user.get();
-            foundUser.setUpdatedAt(new Date());
-            userService.saveUser(foundUser);
             return ResponseEntity.ok(new TokenResponse(token));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -130,9 +120,6 @@ public class AuthController {
 
     @PutMapping("/me")
     public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest request) {
-        System.out.println("Requête reçue : email=" + request.getCurrentEmail() +
-                ", username=" + request.getUsername() +
-                ", newEmail=" + request.getNewEmail());
         try {
             userService.updateUserProfile(request);
             return ResponseEntity.ok().build();

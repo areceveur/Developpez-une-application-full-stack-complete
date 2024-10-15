@@ -2,10 +2,8 @@ package com.openclassrooms.mddapi.controllers;
 
 import com.openclassrooms.mddapi.dto.requests.ThemeRequest;
 import com.openclassrooms.mddapi.models.DBThemes;
-import com.openclassrooms.mddapi.repository.UserRepository;
 import com.openclassrooms.mddapi.services.ThemeService;
 import com.openclassrooms.mddapi.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +15,13 @@ import java.util.stream.StreamSupport;
 @RestController
 @RequestMapping("/api/themes")
 public class ThemeController {
-    @Autowired
-    private ThemeService themeService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
+    private final ThemeService themeService;
+    private final UserService userService;
+
+    public ThemeController(UserService userService , ThemeService themeService) {
+        this.userService = userService;
+        this.themeService = themeService;
+    }
 
     @GetMapping
     public ResponseEntity<List<ThemeRequest>> getAllThemes() {

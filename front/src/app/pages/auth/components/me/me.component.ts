@@ -1,11 +1,10 @@
-import {Component} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {User} from "../../../../interfaces/user.interface";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
 import {ThemeService} from "../../../themes/services/theme.service";
 import {Theme} from "../../../themes/interfaces/theme.interface";
-import {catchError, of, switchMap} from "rxjs";
-import {SessionService} from "../../../../services/session.service";
+import {catchError, of, Subject, switchMap, takeUntil} from "rxjs";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {PasswordValidator} from "../../services/password.validator";
@@ -15,16 +14,16 @@ import {PasswordValidator} from "../../services/password.validator";
   templateUrl: "./me.component.html",
   styleUrls: ["./me.component.scss"]
 })
-export class MeComponent {
+export class MeComponent implements OnInit, OnDestroy {
   public user: User | undefined;
   public subscribedThemes: Theme[] = [];
   public profileForm: FormGroup;
   public passwordForm: FormGroup;
+  private destroy$ = new Subject<boolean>();
 
   constructor(private authService: AuthService,
               private router: Router,
               private themeService: ThemeService,
-              private sessionService: SessionService,
               private snackBar: MatSnackBar,
               private fb: FormBuilder) {
     this.profileForm = this.fb.group({
@@ -59,11 +58,11 @@ export class MeComponent {
       catchError((error) => {
         console.error('Erreur lors de la récupération des abonnements ou de l\'utilisateur', error);
         return(of(null))
-      })
+      }),
+      takeUntil(this.destroy$)
     ).subscribe((themes: Theme[] | null) => {
       if (themes) {
         this.subscribedThemes = themes;
-        console.log(this.subscribedThemes);
       }
     });
   }
@@ -73,8 +72,6 @@ export class MeComponent {
 
       const updatedUser = this.profileForm.value;
 
-      console.log("Profile form : ", updatedUser.newEmail);
-
       const currentEmail = this.user?.email;
 
       const updatedRequest = {
@@ -83,18 +80,17 @@ export class MeComponent {
         newEmail: updatedUser.newEmail
       };
 
-      console.log("Profile form updated : ", updatedRequest);
-
       this.authService.updateUser(updatedRequest).pipe(
         switchMap(() => {
         this.snackBar.open("Le profil a été mis à jour", "Fermer", {duration: 3000});
         return of(null);
       }),
-          catchError(error => {
-        console.error("Erreur lors de la mise à jour du profil", error);
-        this.snackBar.open("Erreur lors de la mise à jour du profil", "Fermer", {duration: 3000})
-        return of(null);
-          })
+        catchError(error => {
+          console.error("Erreur lors de la mise à jour du profil", error);
+          this.snackBar.open("Erreur lors de la mise à jour du profil", "Fermer", {duration: 3000})
+          return of(null);
+        }),
+        takeUntil(this.destroy$)
       ).subscribe();
     }
   }
@@ -107,10 +103,11 @@ export class MeComponent {
         return of(null);
     }),
         catchError(error => {
-      console.error('Erreur lors du désabonnement', error);
-      this.snackBar.open("Erreur lors du désabonnement", 'Fermer', {duration: 3000});
-      return of(null);
-    })
+        console.error('Erreur lors du désabonnement', error);
+        this.snackBar.open("Erreur lors du désabonnement", 'Fermer', {duration: 3000});
+        return of(null);
+    }),
+      takeUntil(this.destroy$)
     ).subscribe();
   }
 
@@ -126,7 +123,8 @@ export class MeComponent {
           console.error('Erreur lors de la mise à jour du mot de passe', error);
           this.snackBar.open("Erreur lors de la mise à jour du mot de passe","Fermer", {duration: 3000})
           return of(null);
-        })
+        }),
+        takeUntil(this.destroy$)
       ).subscribe();
     }
   }
@@ -138,5 +136,10 @@ export class MeComponent {
   public logout(): void {
     this.authService.logout();
     this.router.navigate(['']);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

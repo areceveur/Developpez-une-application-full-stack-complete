@@ -6,7 +6,6 @@ import com.openclassrooms.mddapi.models.DBUser;
 import com.openclassrooms.mddapi.repository.SubscriptionRepository;
 import com.openclassrooms.mddapi.repository.ThemeRepository;
 import com.openclassrooms.mddapi.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +14,15 @@ import java.util.Optional;
 
 @Service
 public class ThemeService {
-    @Autowired
-    private ThemeRepository themeRepository;
+    private final ThemeRepository themeRepository;
+    private final UserRepository userRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+    public ThemeService(ThemeRepository themeRepository, UserRepository userRepository, SubscriptionRepository subscriptionRepository) {
+        this.themeRepository = themeRepository;
+        this.userRepository = userRepository;
+        this.subscriptionRepository = subscriptionRepository;
+    }
 
     public Iterable<DBThemes> getAllThemes() {
         return themeRepository.findAll();
