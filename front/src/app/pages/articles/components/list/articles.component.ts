@@ -1,5 +1,5 @@
-import {Component, OnInit} from "@angular/core";
-import {catchError, Observable, of, switchMap} from "rxjs";
+import {Component, OnDestroy, OnInit} from "@angular/core";
+import {catchError, Observable, of, Subject, takeUntil} from "rxjs";
 import {ArticlesResponse} from "../../interfaces/articlesResponse.interface";
 import {ArticlesService} from "../../services/articles.service";
 import {Article} from "../../interfaces/article.interface";
@@ -9,12 +9,13 @@ import {Article} from "../../interfaces/article.interface";
   templateUrl: "./articles.component.html",
   styleUrls: ["./articles.component.scss"],
 })
-export class ArticlesComponent implements OnInit {
+export class ArticlesComponent implements OnInit, OnDestroy {
   public articles$: Observable<ArticlesResponse>;
   public articles: Article[] = [];
   public sortOrder: 'asc' | 'desc' = 'asc';
   public isLoading = true;
   public errorMessage: string = "";
+  private destroy$ = new Subject<boolean>();
 
   constructor(
     private articlesService: ArticlesService
@@ -32,7 +33,8 @@ export class ArticlesComponent implements OnInit {
         this.errorMessage = "Erreur lors du chargement de la page";
         this.isLoading = false;
         return(of([]));
-      })
+      }),
+      takeUntil(this.destroy$)
     ).subscribe((articles: Article[]) => {
       this.isLoading = false;
       this.articles = articles;
@@ -51,5 +53,10 @@ export class ArticlesComponent implements OnInit {
       const dateB = new Date(b.created_at).getTime();
       return this.sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

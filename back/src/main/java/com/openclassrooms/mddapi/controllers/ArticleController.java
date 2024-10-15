@@ -84,6 +84,7 @@ public class ArticleController {
             requestDto.setThemeName(themeName);
             requestDto.setTitre(dbArticle.getTitre());
             requestDto.setAuteur(dbArticle.getAuteur());
+            requestDto.setContenu(dbArticle.getContenu());
             requestDto.setCreated_at(dbArticle.getCreated_at());
 
             return ResponseEntity.ok(requestDto);

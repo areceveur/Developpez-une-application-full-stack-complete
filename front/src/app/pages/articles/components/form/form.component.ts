@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Article} from "../../interfaces/article.interface";
@@ -8,6 +8,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {ArticlesService} from "../../services/articles.service";
 import {Theme} from "../../../themes/interfaces/theme.interface";
 import {ThemeService} from "../../../themes/services/theme.service";
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: "app-form",
@@ -15,9 +16,10 @@ import {ThemeService} from "../../../themes/services/theme.service";
   styleUrls: ['./form.component.scss']
 })
 
-export class FormComponent implements OnInit {
+export class FormComponent implements OnInit, OnDestroy {
   public articleForm: FormGroup | undefined;
   public theme: Theme[] = [];
+  private destroy$ = new Subject<Boolean>();
 
   constructor(
               private router: Router,
@@ -30,7 +32,8 @@ export class FormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.themeService.getAllThemes().subscribe((themes) => {
+    this.themeService.getAllThemes().pipe(takeUntil(this.destroy$))
+      .subscribe((themes) => {
       this.theme = themes;
     })
   }
@@ -42,7 +45,8 @@ export class FormComponent implements OnInit {
       themeId: this.articleForm!.get("themeId")?.value,
     };
 
-    this.articlesService.create(articleData).subscribe((response) => {
+    this.articlesService.create(articleData).pipe(takeUntil(this.destroy$))
+      .subscribe((response) => {
       this.exitPage(response)
     });
   }
@@ -61,6 +65,11 @@ export class FormComponent implements OnInit {
   private exitPage(articleResponse: ArticleResponse): void {
     this.matSnackBar.open(articleResponse.message, "Fermer", { duration: 3000 });
     this.router.navigate(['/articles']);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 
 }

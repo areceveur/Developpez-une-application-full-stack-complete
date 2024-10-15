@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnDestroy} from "@angular/core";
 import {User} from "../../../../interfaces/user.interface";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
@@ -7,15 +7,16 @@ import {SessionService} from "../../../../services/session.service";
 import {RegisterRequest} from "../../interfaces/registerRequest.interface";
 import {AuthSuccess} from "../../interfaces/AuthSuccess.interface";
 import {PasswordValidator} from "../../services/password.validator";
-import {catchError, of, switchMap} from "rxjs";
+import {catchError, of, Subject, switchMap, takeUntil} from "rxjs";
 
 @Component({
   selector: "register",
   templateUrl: "./register.component.html",
   styleUrls: ["./register.component.scss"]
 })
-export class RegisterComponent{
+export class RegisterComponent implements OnDestroy {
   onError = false;
+  private destroy$ = new Subject<boolean>();
 
   constructor(private authService: AuthService,
               private router: Router,
@@ -33,14 +34,14 @@ export class RegisterComponent{
     this.authService.register(registerRequest).pipe(
       switchMap((response: AuthSuccess) => {
         localStorage.setItem('token', response.token);
-
         return this.authService.me();
       }),
-        catchError(error => {
-          console.error('Erreur de connexion :', error);
-          this.onError = true;
-          return of(null);
-        })
+      catchError(error => {
+        console.error('Erreur de connexion :', error);
+        this.onError = true;
+        return of(null);
+      }),
+      takeUntil(this.destroy$)
     ).subscribe((user: User | null) => {
       if(user) {
         this.sessionService.logIn(user);
@@ -51,5 +52,10 @@ export class RegisterComponent{
 
     public back(): void {
       window.history.back();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

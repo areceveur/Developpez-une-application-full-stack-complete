@@ -1,8 +1,8 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, OnDestroy} from "@angular/core";
 import {ArticlesService} from "../../services/articles.service";
 import {ActivatedRoute} from "@angular/router";
 import {Article} from "../../interfaces/article.interface";
-import {catchError, of} from "rxjs";
+import {catchError, of, Subject, takeUntil} from "rxjs";
 import {Comment} from "../../interfaces/comment.interface";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
@@ -11,13 +11,14 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss']
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit, OnDestroy {
 
   public articleId: string;
   public article?: Article;
   public isLoading = false;
   public errorMessage: string | null = null;
   public comments: Comment[] = [];
+  private destroy$ = new Subject<boolean>();
 
   constructor(
     private route: ActivatedRoute,
@@ -32,7 +33,7 @@ export class DetailComponent implements OnInit {
     this.fetchComments();
   }
 
-  public back() {
+  public back(): void {
     window.history.back();
   }
 
@@ -46,17 +47,20 @@ export class DetailComponent implements OnInit {
           this.errorMessage = "Erreur lors du chargement de l'article";
           this.isLoading = false;
           return of(null);
-        })
+        }),
+      takeUntil(this.destroy$)
     ).subscribe((article: Article | null) => {
       this.isLoading = false;
       if (article) {
         this.article = article;
+        console.log(this.article);
       }
       });
   }
 
   public fetchComments(): void {
-    this.articleService.getComments(this.articleId).subscribe((comments: Comment[]) => {
+    this.articleService.getComments(this.articleId).pipe(takeUntil(this.destroy$))
+      .subscribe((comments: Comment[]) => {
       this.comments = comments;
     })
   }
@@ -71,11 +75,17 @@ export class DetailComponent implements OnInit {
         content: this.commentForm.get('content')?.value
       };
 
-      this.articleService.addComments(this.articleId, commentData).subscribe(() => {
+      this.articleService.addComments(this.articleId, commentData).pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
         this.fetchComments();
         this.commentForm.reset({content: ''});
       })
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }
 
